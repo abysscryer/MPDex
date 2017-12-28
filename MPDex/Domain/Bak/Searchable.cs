@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
-namespace MPDex.Domain
+namespace MPDex.Domain.Base
 {
     public class Searchable
     {

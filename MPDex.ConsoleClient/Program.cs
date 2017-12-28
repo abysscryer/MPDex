@@ -16,7 +16,7 @@ namespace MPDex.ConsoleClient
             var serviceProvider = new ServiceCollection()
                 .AddLogging()
                 .AddDbContext<MPDexContext>(options =>
-                    options.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=MPDexDBTest;Integrated Security=true;"))
+                    options.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=MPDexTestDB;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=True;ApplicationIntent=ReadWrite;MultiSubnetFailover=False;"))
                 .AddScoped(typeof(IReadOnlyRepository<>), typeof(ReadOnlyRepository<>))
                 .AddScoped(typeof(IRepository<>), typeof(Repository<>))
                 .BuildServiceProvider();
@@ -37,12 +37,15 @@ namespace MPDex.ConsoleClient
             var book = new Book(BookType.Buy, 0.0005m, 0.5m, 0.5m, customer, coin);
 
             //var context = MPDexContext.Create();
+            var context = serviceProvider.GetRequiredService<MPDexContext>();
+            context.Database.Migrate();
 
             using (var repository = serviceProvider.GetService<IRepository<Book>>())
             {
                 repository.Create(book);
                 repository.SaveAsync().Wait();
             }
+
             Console.ReadKey();
         }
     }
