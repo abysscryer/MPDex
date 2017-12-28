@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace MPDex.Domain
 {
-    public class Customer : Recordable<Guid>
+    public class Customer : Editable<Guid>
     {
         public Customer()
         {}

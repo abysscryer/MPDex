@@ -4,7 +4,7 @@ using System.Text;
 
 namespace MPDex.Domain
 {
-    public class Recordable<T>: Entity<T>, IRecordable
+    public class Editable<T>: Entity<T>, IEditable
     {
         public DateTime CreatedOn { get; set; }
         public DateTime UpdatedOn { get; set; }

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace MPDex.Domain
 {
-    public class Auditable<T> : Recordable<T>, IAuditable
+    public class Auditable<T> : Editable<T>, IAuditable
     {
         public Customer CreatedBy { get; set; }
         public Customer UpdatedBy { get; set; }
