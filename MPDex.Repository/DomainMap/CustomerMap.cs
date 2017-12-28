@@ -6,33 +6,47 @@ using System.Text;
 
 namespace MPDex.Repository.DomainMap
 {
+    /// <summary>
+    /// customer mapper
+    /// </summary>
     public class CustomerMap
     {
+        /// <summary>
+        /// constructor
+        /// </summary>
+        /// <param name="builder"></param>
         public CustomerMap(ModelBuilder builder)
         {
-            builder.Entity<Customer>().HasKey(t => t.Id);
-            //builder.Entity<Customer>().HasBaseType<Recordable<Guid>>();
-            builder.Entity<Customer>(t =>
+            // build constraints
+            builder.Entity<Customer>().HasKey(c => c.Id);
+            
+            // build fields
+            builder.Entity<Customer>(n =>
             {
-                t.Property(f => f.NiceName)
+                n.Property(c => c.Id)
+                    .ValueGeneratedOnAdd();
+                n.Property(c => c.NiceName)
                     .IsRequired()
                     .HasMaxLength(16);
-                t.Property(f => f.FamilyName)
+                n.Property(c => c.FamilyName)
                     .IsRequired()
                     .HasMaxLength(16);
-                t.Property(f => f.GivenName)
+                n.Property(c => c.GivenName)
                     .IsRequired()
                     .HasMaxLength(16);
-                t.Property(f => f.Email)
+                n.Property(c => c.Email)
                     .IsRequired()
                     .IsUnicode(false)
                     .HasMaxLength(36);
-                t.Property(f => f.CellPhone)
+                n.Property(c => c.CellPhone)
                     .IsRequired()
                     .IsUnicode(false)
                     .HasMaxLength(20);
-                t.Property(f => f.CreatedOn)
-                    .IsRequired();
+                n.Property(c => c.CreatedOn)
+                    .IsRequired()
+                    .ValueGeneratedOnAdd();
+                n.Property(c => c.UpdatedOn)
+                    .ValueGeneratedOnUpdate();
             }); 
         }
     }

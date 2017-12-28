@@ -4,6 +4,10 @@ using System.Text;
 
 namespace MPDex.Domain
 {
+    /// <summary>
+    /// base entity abstract class
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public abstract class Entity<T>: IEntity<T>
     {
         public T Id { get; set; }

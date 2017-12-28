@@ -7,10 +7,18 @@ using System.Text;
 
 namespace MPDex.Repository.DomainMap
 {
+    /// <summary>
+    /// book mapper
+    /// </summary>
     public class BookMap
     {
+        /// <summary>
+        /// constructor
+        /// </summary>
+        /// <param name="builder"></param>
         public BookMap(ModelBuilder builder)
         {
+            // build constraints
             builder.Entity<Book>()
                 .HasKey(t => t.Id);
             builder.Entity<Book>()
@@ -20,7 +28,7 @@ namespace MPDex.Repository.DomainMap
                 .HasOne(b => b.Customer)
                 .WithMany(c => c.Books);
 
-            //builder.Entity<Book>().HasBaseType<Auditable<Guid>>();
+            // build fields
             builder.Entity<Book>(n => {
                 n.Property(b => b.Id)
                     .ValueGeneratedOnAdd();
@@ -38,6 +46,8 @@ namespace MPDex.Repository.DomainMap
                     .ValueGeneratedOnAdd();
                 n.Property(f => f.UpdatedOn)
                     .ValueGeneratedOnUpdate();
+                n.Property(b => b.Version)
+                    .IsRowVersion();
             });
         }
     }
