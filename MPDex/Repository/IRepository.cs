@@ -1,7 +1,5 @@
-﻿using System;
-using System.Text;
+﻿using MPDex.Domain.Base;
 using System.Threading.Tasks;
-using MPDex.Domain;
 
 namespace MPDex.Repository
 {
@@ -41,12 +39,12 @@ namespace MPDex.Repository
         /// <summary>
         /// save
         /// </summary>
-        void Save();
+        int Save();
 
         /// <summary>
         /// save async
         /// </summary>
         /// <returns></returns>
-        Task SaveAsync();
+        Task<int> SaveAsync();
     }
 }

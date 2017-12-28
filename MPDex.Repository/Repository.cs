@@ -1,8 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MPDex.Domain;
-using System;
-using System.Linq;
+using MPDex.Domain.Base;
 using System.Threading.Tasks;
+
 namespace MPDex.Repository
 {
     /// <summary>
@@ -68,48 +67,19 @@ namespace MPDex.Repository
         /// <summary>
         /// save
         /// </summary>
-        public virtual void Save()
+        public virtual int Save()
         {
-            try
-            {
-                this.context.SaveChanges();
-            }
-            catch //(DbEntityValidationException e)
-            {
-                throw;
-                //ThrowEnhancedValidationException(e);
-            }
+            return this.context.SaveChanges();
         }
 
         /// <summary>
         /// save async
         /// </summary>
         /// <returns></returns>
-        public virtual Task SaveAsync()
+        public virtual async Task<int> SaveAsync()
         {
-            try
-            {
-                return this.context.SaveChangesAsync();
-            }
-            catch //(DbEntityValidationException e)
-            {
-                throw;
-                //ThrowEnhancedValidationException(e);
-            }
-
-            return Task.FromResult(0);
+            return await this.context.SaveChangesAsync();
         }
-
-        //protected virtual void ThrowEnhancedValidationException(DbEntityValidationException e)
-        //{
-        //    var errorMessages = e.EntityValidationErrors
-        //            .SelectMany(x => x.ValidationErrors)
-        //            .Select(x => x.ErrorMessage);
-
-        //    var fullErrorMessage = string.Join("; ", errorMessages);
-        //    var exceptionMessage = string.Concat(e.Message, " The validation errors are: ", fullErrorMessage);
-        //    throw new DbEntityValidationException(exceptionMessage, e.EntityValidationErrors);
-        //}
 
         #region dispose
         

@@ -1,4 +1,4 @@
-﻿namespace MPDex.Domain.Base.Base
+﻿namespace MPDex.Domain.Base
 {
     /// <summary>
     /// type start with 1

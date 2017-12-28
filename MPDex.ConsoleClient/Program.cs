@@ -1,10 +1,9 @@
 ﻿using System;
 using MPDex.Domain;
+using MPDex.Domain.Base;
 using MPDex.Repository;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Console;
-using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
 
 namespace MPDex.ConsoleClient

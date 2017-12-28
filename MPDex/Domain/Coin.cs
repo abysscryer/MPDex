@@ -1,6 +1,5 @@
-﻿using System;
+﻿using MPDex.Domain.Base;
 using System.Collections.Generic;
-using System.Text;
 
 namespace MPDex.Domain
 {
