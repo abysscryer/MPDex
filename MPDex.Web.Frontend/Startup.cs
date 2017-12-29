@@ -1,13 +1,16 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using MPDex.Data;
-//using MPDex.Web.Frontend.Data;
-using MPDex.Models;
-using MPDex.Services;
+using MPDex.Web.Frontend.Data;
+using MPDex.Web.Frontend.Models;
+using MPDex.Web.Frontend.Services;
 
 namespace MPDex.Web.Frontend
 {
@@ -23,11 +26,11 @@ namespace MPDex.Web.Frontend
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<MPDexDbContext>(options =>
+            services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<MPDexUser, IdentityRole>()
-                .AddEntityFrameworkStores<MPDexDbContext>()
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
             // Add application services.
