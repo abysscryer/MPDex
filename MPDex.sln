@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MPDex", "MPDex\MPDex.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MPDex.Repository", "MPDex.Repository\MPDex.Repository.csproj", "{C3E37612-90B6-4BE5-B4AA-10B923B7208F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPDex.ConsoleClient", "MPDex.ConsoleClient\MPDex.ConsoleClient.csproj", "{10F5FC82-AAC8-41CF-B4EE-E25DD8C7689D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MPDex.Api", "MPDex.Api\MPDex.Api.csproj", "{AB306C65-6AE9-407F-976C-55B33A6FB754}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,10 @@ Global
 		{C3E37612-90B6-4BE5-B4AA-10B923B7208F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C3E37612-90B6-4BE5-B4AA-10B923B7208F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C3E37612-90B6-4BE5-B4AA-10B923B7208F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{10F5FC82-AAC8-41CF-B4EE-E25DD8C7689D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{10F5FC82-AAC8-41CF-B4EE-E25DD8C7689D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{10F5FC82-AAC8-41CF-B4EE-E25DD8C7689D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{10F5FC82-AAC8-41CF-B4EE-E25DD8C7689D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB306C65-6AE9-407F-976C-55B33A6FB754}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB306C65-6AE9-407F-976C-55B33A6FB754}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB306C65-6AE9-407F-976C-55B33A6FB754}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB306C65-6AE9-407F-976C-55B33A6FB754}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
