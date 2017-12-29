@@ -1,13 +1,10 @@
-﻿using MPDex.Domain;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using MPDex.Models;
 
-namespace MPDex.Repository
+namespace MPDex.Data
 {
     public class BookRepository : Repository<Book>, IBookRepository
     {
-        public BookRepository(MPDexContext context) : base(context)
+        public BookRepository(MPDexDbContext context) : base(context)
         { }
 
         #region dispose

@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MPDex.Domain.Base;
+using MPDex.Models.Base;
 using System.Threading.Tasks;
 
-namespace MPDex.Repository
+namespace MPDex.Data
 {
     /// <summary>
     /// generic repository
@@ -15,7 +15,7 @@ namespace MPDex.Repository
         /// constructor
         /// </summary>
         /// <param name="context"></param>
-        public Repository(MPDexContext context)
+        public Repository(MPDexDbContext context)
             : base(context)
         { }
 

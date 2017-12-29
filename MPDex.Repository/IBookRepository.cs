@@ -1,9 +1,6 @@
-﻿using MPDex.Domain;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using MPDex.Models;
 
-namespace MPDex.Repository
+namespace MPDex.Data
 {
     public interface IBookRepository : IRepository<Book>
     { }

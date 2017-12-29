@@ -5,9 +5,7 @@ VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MPDex", "MPDex\MPDex.csproj", "{6495770D-4AC9-4E1F-89F7-AC7A3EA2BE70}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MPDex.Repository", "MPDex.Repository\MPDex.Repository.csproj", "{C3E37612-90B6-4BE5-B4AA-10B923B7208F}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MPDex.Api", "MPDex.Api\MPDex.Api.csproj", "{AB306C65-6AE9-407F-976C-55B33A6FB754}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MPDex.Data", "MPDex.Repository\MPDex.Data.csproj", "{C3E37612-90B6-4BE5-B4AA-10B923B7208F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +21,6 @@ Global
 		{C3E37612-90B6-4BE5-B4AA-10B923B7208F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C3E37612-90B6-4BE5-B4AA-10B923B7208F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C3E37612-90B6-4BE5-B4AA-10B923B7208F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AB306C65-6AE9-407F-976C-55B33A6FB754}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AB306C65-6AE9-407F-976C-55B33A6FB754}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AB306C65-6AE9-407F-976C-55B33A6FB754}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AB306C65-6AE9-407F-976C-55B33A6FB754}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

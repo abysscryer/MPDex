@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MPDex.Domain.Base;
+using MPDex.Models.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace MPDex.Repository
+namespace MPDex.Data
 {
     /// <summary>
     /// read only generic repository
@@ -18,7 +18,7 @@ namespace MPDex.Repository
         /// <summary>
         /// db context
         /// </summary>
-        protected readonly MPDexContext context;
+        protected readonly MPDexDbContext context;
 
         /// <summary>
         /// dbset entities
@@ -29,7 +29,7 @@ namespace MPDex.Repository
         /// constructor
         /// </summary>
         /// <param name="context"></param>
-        public ReadOnlyRepository(MPDexContext context)
+        public ReadOnlyRepository(MPDexDbContext context)
         {
             this.context = context;
             this.entities = this.context.Set<T>();
