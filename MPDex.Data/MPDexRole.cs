@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace MPDex.Models
+namespace MPDex.Data.Models
 {
     public class MPDexRole : IdentityRole
     { }

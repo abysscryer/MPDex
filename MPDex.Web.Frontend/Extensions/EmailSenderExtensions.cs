@@ -1,9 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using MPDex.Services;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using MPDex.Web.Frontend.Services;
 
 namespace MPDex.Web.Frontend.Services
 {

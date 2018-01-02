@@ -1,8 +1,9 @@
 ﻿
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using MPDex.Models;
 using MPDex.Data.Mapper;
+using MPDex.Models;
+using MPDex.Data.Models;
 
 namespace MPDex.Data
 {

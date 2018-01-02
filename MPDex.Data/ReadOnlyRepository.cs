@@ -32,7 +32,7 @@ namespace MPDex.Data
         public ReadOnlyRepository(MPDexDbContext context)
         {
             this.context = context;
-            this.entities = this.context.Set<T>();
+            this.entities = context.Set<T>();
         }
 
         /// <summary>

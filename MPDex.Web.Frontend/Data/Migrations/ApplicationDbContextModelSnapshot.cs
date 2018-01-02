@@ -125,7 +125,7 @@ namespace MPDex.Web.Frontend.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("MPDex.Web.Frontend.Models.ApplicationUser", b =>
+            modelBuilder.Entity("MPDex.Web.Frontend.Models.MPDexUser", b =>
                 {
                     b.Property<string>("Id");
 
@@ -184,7 +184,7 @@ namespace MPDex.Web.Frontend.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.EntityFrameworkCore.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("MPDex.Web.Frontend.Models.ApplicationUser")
+                    b.HasOne("MPDex.Web.Frontend.Models.MPDexUser")
                         .WithMany("Claims")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -192,7 +192,7 @@ namespace MPDex.Web.Frontend.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.EntityFrameworkCore.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("MPDex.Web.Frontend.Models.ApplicationUser")
+                    b.HasOne("MPDex.Web.Frontend.Models.MPDexUser")
                         .WithMany("Logins")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -205,7 +205,7 @@ namespace MPDex.Web.Frontend.Data.Migrations
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("MPDex.Web.Frontend.Models.ApplicationUser")
+                    b.HasOne("MPDex.Web.Frontend.Models.MPDexUser")
                         .WithMany("Roles")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
