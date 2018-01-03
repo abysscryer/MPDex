@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MPDex.Data.Models;
 using MPDex.Services;
+using MPDex.Web.Frontend.Services;
 using MPDex.Web.Frontend.Models.AccountViewModels;
 using System;
 using System.Security.Claims;

@@ -14,20 +14,20 @@ namespace MPDex.Data
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public Book GetById(Guid id)
-        {
-            return this._dbSet.Find(id);
-        }
+        //public Book GetById(Guid id)
+        //{
+        //    return this._dbSet.Find(id);
+        //}
 
         /// <summary>
         /// find entity async
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<Book> GetByIdAsync(Guid id)
-        {
-            return await this._dbSet.FindAsync(id);
-        }
+        //public async Task<Book> GetByIdAsync(Guid id)
+        //{
+        //    return await this._dbSet.FindAsync(id);
+        //}
         
     }
 }

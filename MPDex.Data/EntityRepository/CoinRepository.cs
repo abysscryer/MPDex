@@ -12,14 +12,14 @@ namespace MPDex.Data
         public CoinRepository(MPDexDbContext context) : base(context)
         { }
 
-        public Coin GetById(short id)
-        {
-            return this._dbSet.Find(id);   
-        }
+        //public Coin GetById(short id)
+        //{
+        //    return this._dbSet.Find(id);   
+        //}
 
-        public async Task<Coin> GetByIdAsync(short id)
-        {
-            return await this._dbSet.FindAsync(id);
-        }
+        //public async Task<Coin> GetByIdAsync(short id)
+        //{
+        //    return await this._dbSet.FindAsync(id);
+        //}
     }
 }

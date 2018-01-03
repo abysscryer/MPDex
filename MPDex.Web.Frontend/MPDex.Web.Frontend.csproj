@@ -20,7 +20,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MPDex.Data\MPDex.Data.csproj" />
+    <ProjectReference Include="..\MPDex.Services\MPDex.Services.csproj" />
     <ProjectReference Include="..\MPDex\MPDex.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>
