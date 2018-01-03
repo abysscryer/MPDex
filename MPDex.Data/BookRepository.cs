@@ -1,4 +1,6 @@
 ﻿using MPDex.Models;
+using System;
+using System.Threading.Tasks;
 
 namespace MPDex.Data
 {
@@ -7,38 +9,25 @@ namespace MPDex.Data
         public BookRepository(MPDexDbContext context) : base(context)
         { }
 
-        #region dispose
-
         /// <summary>
-        /// dispose status
+        /// find entity
         /// </summary>
-        private bool disposed = false;
-
-        /// <summary>
-        /// dispose
-        /// </summary>
-        /// <param name="disposing"></param>
-        protected override void Dispose(bool disposing)
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public Book GetById(Guid id)
         {
-            if (!this.disposed)
-            {
-                if (disposing)
-                {
-                    this.context.Dispose();
-                }
-                this.disposed = true;
-                base.Dispose(disposing);
-            }
+            return this._dbSet.Find(id);
         }
 
         /// <summary>
-        /// finallizer
+        /// find entity async
         /// </summary>
-        ~BookRepository()
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<Book> GetByIdAsync(Guid id)
         {
-            Dispose(false);
+            return await this._dbSet.FindAsync(id);
         }
-
-        #endregion
+        
     }
 }

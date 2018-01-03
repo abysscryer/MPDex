@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MPDex.Data\MPDex.Data.csproj" />
     <ProjectReference Include="..\MPDex\MPDex.csproj" />
   </ItemGroup>
 

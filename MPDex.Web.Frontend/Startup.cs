@@ -7,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 using MPDex.Data;
 using MPDex.Data.Models;
 using MPDex.Services;
-using MPDex.Web.Frontend.Data;
 
 namespace MPDex.Web.Frontend
 {
@@ -30,7 +29,8 @@ namespace MPDex.Web.Frontend
                 .AddEntityFrameworkStores<MPDexDbContext>()
                 .AddDefaultTokenProviders();
 
-            // Add application services.
+            services.AddUnitOfWork<MPDexDbContext>();
+            
             services.AddTransient<IEmailSender, EmailSender>();
 
             services.AddMvc();
@@ -61,5 +61,6 @@ namespace MPDex.Web.Frontend
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
         }
+        
     }
 }

@@ -7,8 +7,9 @@ namespace MPDex.Data
     /// generic repository interface
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public interface IRepository<T> : IReadOnlyRepository<T>
-        where T : class, IEntity
+    public interface _IRepository<T> : _IReadOnlyRepository<T>
+        //where T : class, IEntity
+        where T : BaseEntity
     {
         /// <summary>
         /// create

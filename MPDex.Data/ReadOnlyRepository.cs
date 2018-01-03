@@ -12,28 +12,55 @@ namespace MPDex.Data
     /// read only generic repository
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class ReadOnlyRepository<T> : IReadOnlyRepository<T>
-        where T : class, IEntity
+    public class ReadOnlyRepository<C, T> : _IReadOnlyRepository<T> 
+        where T : BaseEntity 
+        where C : DbContext
     {
         /// <summary>
         /// db context
         /// </summary>
-        protected readonly MPDexDbContext context;
+        //protected readonly MPDexDbContext context;
+        //private C context = new C();
+        private C context;
+
+        protected C Context
+        {
+
+            get { return this.context; }
+            set { this.context = value; }
+        }
 
         /// <summary>
         /// dbset entities
         /// </summary>
-        protected readonly DbSet<T> entities;
+        private DbSet<T> entities;
+
+        protected DbSet<T> Entities
+        {
+
+            get { return this.entities; }
+            set { this.entities = value; }
+        }
 
         /// <summary>
         /// constructor
         /// </summary>
         /// <param name="context"></param>
-        public ReadOnlyRepository(MPDexDbContext context)
+        //public ReadOnlyRepository(C context, T entity)
+        //{
+        //    this.context = context;
+        //    this.entities = context.Set<T>();
+        //}
+        public ReadOnlyRepository(C context)
         {
             this.context = context;
-            this.entities = context.Set<T>();
+            this.entities = this.context.Set<T>();
         }
+
+        //public ReadOnlyRepository()
+        //{
+        //    this.entities = this.context.Set<T>();
+        //}
 
         /// <summary>
         /// make query
@@ -216,20 +243,20 @@ namespace MPDex.Data
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public virtual T GetById(object id)
-        {
-            return this.entities.Find(id);
-        }
+        //public virtual T GetById(object id)
+        //{
+        //    return this.entities.Find(id);
+        //}
 
         /// <summary>
         /// find entity async
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public virtual async Task<T> GetByIdAsync(object id)
-        {
-            return await this.entities.FindAsync(id);
-        }
+        //public virtual async Task<T> GetByIdAsync(object id)
+        //{
+        //    return await this.entities.FindAsync(id);
+        //}
 
         /// <summary>
         /// count entities

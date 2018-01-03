@@ -11,8 +11,8 @@ namespace MPDex.Data
     /// read only generic repository interface
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public interface IReadOnlyRepository<T>: IDisposable
-        where T : class, IEntity
+    public interface _IReadOnlyRepository<T>: IDisposable
+        where T : BaseEntity
     {
         /// <summary>
         /// get all entities
@@ -123,14 +123,14 @@ namespace MPDex.Data
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        T GetById(object id);
+        //T GetById(object id);
 
         /// <summary>
         /// find entity async
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<T> GetByIdAsync(object id);
+        //Task<T> GetByIdAsync(object id);
 
         /// <summary>
         /// count entities

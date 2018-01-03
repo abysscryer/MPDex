@@ -4,10 +4,13 @@ using Microsoft.EntityFrameworkCore;
 using MPDex.Data.Mapper;
 using MPDex.Models;
 using MPDex.Data.Models;
+using MPDex.Models.Base;
+using System.Collections.Generic;
 
 namespace MPDex.Data
 {
-    public class MPDexDbContext : IdentityDbContext<MPDexUser>
+
+    public class MPDexDbContext : IdentityDbContext<MPDexUser, MPDexRole, string>
     {
         /// <summary>
         /// constructor
@@ -26,6 +29,8 @@ namespace MPDex.Data
         /// book model
         /// </summary>
         public DbSet<Book> Books { get; set; }
+
+        public DbSet<Coin> Coins { get; set; }
 
         /// <summary>
         /// model createing event callback

@@ -16,6 +16,8 @@ namespace MPDex.Models
 
         public decimal Stock { get; set; }
 
+
+
         public virtual Customer Customer { get; set; }
 
         public virtual Coin Coin { get; set; }
