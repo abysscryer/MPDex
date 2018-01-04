@@ -7,7 +7,7 @@ namespace MPDex.Models.Base
     /// </summary>
     public interface IEditable
     {
-        DateTime CreatedOn { get; set; }
-        DateTime UpdatedOn { get; set; }
+        DateTime OnCreated { get; set; }
+        DateTime? OnUpdated { get; set; }
     }
 }

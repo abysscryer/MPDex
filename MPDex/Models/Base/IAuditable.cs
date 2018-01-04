@@ -6,6 +6,6 @@
     public interface IAuditable : IEditable
     {
         string IPAddress { get; set; }
-        byte[] Version { get; set; }
+        byte[] RowVersion { get; set; }
     }
 }

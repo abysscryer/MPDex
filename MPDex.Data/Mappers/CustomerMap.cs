@@ -20,8 +20,8 @@ namespace MPDex.Data.Mapper
             // build fields
             builder.Entity<Customer>(n =>
             {
-                n.Property(c => c.Id)
-                    .ValueGeneratedOnAdd();
+                n.Property(b => b.Id)
+                    .HasDefaultValueSql("newid()");
                 n.Property(c => c.NiceName)
                     .IsRequired()
                     .HasMaxLength(16);
@@ -36,13 +36,12 @@ namespace MPDex.Data.Mapper
                     .IsUnicode(false)
                     .HasMaxLength(36);
                 n.Property(c => c.CellPhone)
-                    .IsRequired()
                     .IsUnicode(false)
                     .HasMaxLength(20);
-                n.Property(c => c.CreatedOn)
+                n.Property(c => c.OnCreated)
                     .IsRequired()
-                    .ValueGeneratedOnAdd();
-                n.Property(c => c.UpdatedOn)
+                    .HasDefaultValueSql("getdate()");
+                n.Property(c => c.OnUpdated)
                     .ValueGeneratedOnUpdate();
             }); 
         }

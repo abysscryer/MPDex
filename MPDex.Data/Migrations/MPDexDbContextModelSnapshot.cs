@@ -21,30 +21,6 @@ namespace MPDex.Data.Migrations
                 .HasAnnotation("ProductVersion", "2.0.1-rtm-125")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
-                {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken();
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(256);
-
-                    b.Property<string>("NormalizedName")
-                        .HasMaxLength(256);
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasName("RoleNameIndex")
-                        .HasFilter("[NormalizedName] IS NOT NULL");
-
-                    b.ToTable("AspNetRoles");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.Property<int>("Id")
@@ -129,6 +105,30 @@ namespace MPDex.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("MPDex.Data.Models.MPDexRole", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken();
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256);
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
+
+                    b.ToTable("AspNetRoles");
+                });
+
             modelBuilder.Entity("MPDex.Data.Models.MPDexUser", b =>
                 {
                     b.Property<string>("Id")
@@ -183,34 +183,39 @@ namespace MPDex.Data.Migrations
             modelBuilder.Entity("MPDex.Models.Book", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValueSql("newid()");
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(20, 8)");
 
                     b.Property<byte>("BookType");
 
-                    b.Property<byte?>("CoinId");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .ValueGeneratedOnAdd();
+                    b.Property<short?>("CoinId");
 
                     b.Property<Guid?>("CustomerId");
 
-                    b.Property<string>("IPAddress");
+                    b.Property<string>("IPAddress")
+                        .IsRequired()
+                        .HasMaxLength(36)
+                        .IsUnicode(false);
+
+                    b.Property<DateTime>("OnCreated")
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValueSql("getdate()");
+
+                    b.Property<DateTime?>("OnUpdated");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(20, 8)");
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate();
+
                     b.Property<decimal>("Stock")
                         .HasColumnType("decimal(20, 8)");
-
-                    b.Property<DateTime>("UpdatedOn")
-                        .ValueGeneratedOnUpdate();
-
-                    b.Property<byte[]>("Version")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate();
 
                     b.HasKey("Id");
 
@@ -218,14 +223,16 @@ namespace MPDex.Data.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("Books");
+                    b.ToTable("Book");
                 });
 
             modelBuilder.Entity("MPDex.Models.Coin", b =>
                 {
-                    b.Property<byte>("Id");
+                    b.Property<short>("Id");
 
-                    b.Property<string>("Name");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(16);
 
                     b.HasKey("Id");
 
@@ -235,15 +242,12 @@ namespace MPDex.Data.Migrations
             modelBuilder.Entity("MPDex.Models.Customer", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValueSql("newid()");
 
                     b.Property<string>("CellPhone")
-                        .IsRequired()
                         .HasMaxLength(20)
                         .IsUnicode(false);
-
-                    b.Property<DateTime>("CreatedOn")
-                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -262,17 +266,20 @@ namespace MPDex.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(16);
 
-                    b.Property<DateTime>("UpdatedOn")
-                        .ValueGeneratedOnUpdate();
+                    b.Property<DateTime>("OnCreated")
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValueSql("getdate()");
+
+                    b.Property<DateTime?>("OnUpdated");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Customers");
+                    b.ToTable("Customer");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole")
+                    b.HasOne("MPDex.Data.Models.MPDexRole")
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -296,7 +303,7 @@ namespace MPDex.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole")
+                    b.HasOne("MPDex.Data.Models.MPDexRole")
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade);

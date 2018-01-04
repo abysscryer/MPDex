@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MPDex.Models\MPDex.Models.csproj" />
     <ProjectReference Include="..\MPDex\MPDex.csproj" />
   </ItemGroup>
 

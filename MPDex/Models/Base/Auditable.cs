@@ -7,6 +7,6 @@
     public abstract class Auditable<T> : Editable<T>, IAuditable
     {
         public string IPAddress { get; set; }
-        public byte[] Version { get; set; }
+        public byte[] RowVersion { get; set; }
     }
 }

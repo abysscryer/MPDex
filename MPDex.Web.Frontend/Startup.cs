@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 using MPDex.Data;
 using MPDex.Data.Models;
 using MPDex.Services;
@@ -22,8 +25,10 @@ namespace MPDex.Web.Frontend
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<MPDexDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("MPDex.Data")));
+            services.AddDbContext<MPDexDbContext>(options => options
+                .UseLoggerFactory(MyLoggerFactory)
+                .UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), 
+                    b => b.MigrationsAssembly("MPDex.Data")));
 
             services.AddIdentity<MPDexUser, MPDexRole>()
                 .AddEntityFrameworkStores<MPDexDbContext>()
@@ -34,6 +39,8 @@ namespace MPDex.Web.Frontend
             services.AddTransient<IEmailSender, EmailSender>();
 
             services.AddMvc();
+
+            services.AddAutoMapper();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -61,6 +68,9 @@ namespace MPDex.Web.Frontend
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
         }
-        
+
+        public static readonly LoggerFactory MyLoggerFactory
+            = new LoggerFactory(new[] { new ConsoleLoggerProvider((_, __) => true, true) });
+
     }
 }

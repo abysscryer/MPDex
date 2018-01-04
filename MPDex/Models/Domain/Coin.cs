@@ -3,11 +3,13 @@ using System.Collections.Generic;
 
 namespace MPDex.Models
 {
-    public class Coin : BaseEntity<byte>
+    /// <summary>
+    /// Coin entity
+    /// </summary>
+    public class Coin : BaseEntity<short>
     {
         public string Name { get; set; }
 
-        // forign key constraints
         public virtual ICollection<Book> Books { get; set; }
     }
 }

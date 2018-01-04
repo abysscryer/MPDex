@@ -23,14 +23,17 @@ namespace MPDex.Data
         /// <summary>
         /// customer model
         /// </summary>
-        public DbSet<Customer> Customers { get; set; }
+        public DbSet<Customer> Customer { get; set; }
 
         /// <summary>
         /// book model
         /// </summary>
-        public DbSet<Book> Books { get; set; }
+        public DbSet<Book> Book { get; set; }
 
-        public DbSet<Coin> Coins { get; set; }
+        /// <summary>
+        /// coin model
+        /// </summary>
+        public DbSet<Coin> Coin { get; set; }
 
         /// <summary>
         /// model createing event callback
@@ -41,6 +44,7 @@ namespace MPDex.Data
             base.OnModelCreating(modelBuilder);
             new CustomerMap(modelBuilder);
             new BookMap(modelBuilder);
+            new CoinMap(modelBuilder);
         }
     }
 }

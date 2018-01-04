@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MPDex.Data", "MPDex.Data\MP
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MPDex.Services", "MPDex.Services\MPDex.Services.csproj", "{C9B9DD6D-747A-41A9-9A0C-4062F6491B9E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPDex.Models", "MPDex.Models\MPDex.Models.csproj", "{2E512C85-3532-42BE-B3C2-36B425CD24FB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MPDex.Models", "MPDex.Models\MPDex.Models.csproj", "{2E512C85-3532-42BE-B3C2-36B425CD24FB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

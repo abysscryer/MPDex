@@ -21,9 +21,12 @@ namespace MPDex.Data.Mapper
             // build constraints
             builder.Entity<Book>()
                 .HasKey(t => t.Id);
+
             builder.Entity<Book>()
                 .HasOne(b => b.Coin)
-                .WithMany(c => c.Books);
+                .WithMany(c => c.Books)
+                .HasForeignKey();
+            
             builder.Entity<Book>()
                 .HasOne(b => b.Customer)
                 .WithMany(c => c.Books);
@@ -31,22 +34,27 @@ namespace MPDex.Data.Mapper
             // build fields
             builder.Entity<Book>(n => {
                 n.Property(b => b.Id)
-                    .ValueGeneratedOnAdd();
-                n.Property(f => f.Price)
+                    .HasDefaultValueSql("newid()");
+                n.Property(b => b.Price)
                     .IsRequired()
                     .HasColumnType("decimal(20, 8)");
-                n.Property(f => f.Amount)
+                n.Property(b => b.Amount)
                     .IsRequired()
                     .HasColumnType("decimal(20, 8)");
-                n.Property(f => f.Stock)
+                n.Property(b => b.Stock)
                     .IsRequired()
                     .HasColumnType("decimal(20, 8)");
-                n.Property(f => f.CreatedOn)
+                n.Property(b => b.OnCreated)
                     .IsRequired()
-                    .ValueGeneratedOnAdd();
-                n.Property(f => f.UpdatedOn)
+                    .HasDefaultValueSql("getdate()");
+                n.Property(b => b.OnUpdated)
                     .ValueGeneratedOnUpdate();
-                n.Property(b => b.Version)
+                n.Property(b => b.IPAddress)
+                    .IsUnicode(false)
+                    .HasMaxLength(36)
+                    .IsRequired();
+                n.Property(b => b.RowVersion)
+                    .IsRequired()
                     .IsRowVersion();
             });
         }

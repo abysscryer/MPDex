@@ -8,7 +8,7 @@ namespace MPDex.Models.Base
     /// <typeparam name="T"></typeparam>
     public abstract class Editable<T>: BaseEntity<T>, IEditable
     {
-        public DateTime CreatedOn { get; set; }
-        public DateTime UpdatedOn { get; set; }
+        public DateTime OnCreated { get; set; }
+        public DateTime? OnUpdated { get; set; }
     }
 }

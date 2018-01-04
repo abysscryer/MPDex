@@ -10,8 +10,15 @@ namespace MPDex.Data.Mapper
     {
         public CoinMap(ModelBuilder builder)
         {
-            // build constraints
-            builder.Entity<Coin>().HasKey(c => c.Id);
+            // build primary key
+            builder.Entity<Coin>()
+                .HasKey(c => c.Id);
+                
+            builder.Entity<Coin>()
+                .Property(c => c.Id)
+                .ValueGeneratedNever();
+
+            // build forign key constrains
             builder.Entity<Coin>()
                 .HasMany(c => c.Books)
                 .WithOne(b => b.Coin);
@@ -20,9 +27,7 @@ namespace MPDex.Data.Mapper
             builder.Entity<Coin>(n => {
                 n.Property(c => c.Name)
                     .IsRequired()
-                    .IsUnicode(false)
                     .HasMaxLength(16);
-
             });
         }
     }
