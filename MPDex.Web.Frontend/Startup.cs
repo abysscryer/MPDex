@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
 using MPDex.Data;
 using MPDex.Data.Models;
+using MPDex.Repository;
 using MPDex.Services;
 
 namespace MPDex.Web.Frontend
@@ -35,7 +36,10 @@ namespace MPDex.Web.Frontend
                 .AddDefaultTokenProviders();
 
             services.AddUnitOfWork<MPDexDbContext>();
-            
+
+            services.AddScoped<ICoinService, CoinService>();
+            services.AddScoped<ICustomerService, CustomerService>();
+
             services.AddTransient<IEmailSender, EmailSender>();
 
             services.AddMvc();

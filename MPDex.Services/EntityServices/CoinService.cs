@@ -1,6 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using MPDex.Data;
+﻿using Microsoft.Extensions.Logging;
+using MPDex.Repository;
 using MPDex.Models.Domain;
 using System;
 using System.Threading.Tasks;
@@ -9,12 +8,14 @@ namespace MPDex.Services
 {
     public class CoinService : ICoinService
     {
-        private readonly MPDexDbContext context;
-        private readonly ILogger logger;
-
-        public CoinService(MPDexDbContext context, ILogger logger)
+        private readonly IUnitOfWork unitOfWork;
+        private readonly CoinRepository coins;
+        private readonly ILogger<CoinService> logger;
+        
+        public CoinService(IUnitOfWork unitOfWork, ILogger<CoinService> logger)
         {
-            this.context = context;
+            this.unitOfWork = unitOfWork;
+            this.coins = (CoinRepository)unitOfWork.GetRepository<Coin>();
             this.logger = logger;
         }
 
@@ -24,8 +25,7 @@ namespace MPDex.Services
 
             try
             {
-                result = await context.Coin
-                    .ToPagedListAsync(pageIndex, pageSize);
+                result = await this.coins.Get().ToPagedListAsync(pageIndex, pageSize);
             }
             catch (Exception ex)
             {
@@ -41,7 +41,7 @@ namespace MPDex.Services
             Coin result;
             try
             {
-                result = await context.Coin.FindAsync(id);
+                result = await this.coins.FindAsync(id);
             }
             catch (Exception ex)
             {
@@ -58,7 +58,7 @@ namespace MPDex.Services
 
             try
             {
-                max = await context.Coin.MaxAsync(x => x.Id);
+                max = await coins.MaxAsync();
             }
             catch (Exception ex )
             {
@@ -77,8 +77,8 @@ namespace MPDex.Services
             {
                 var max = await this.Max();
                 entity.Id = Convert.ToInt16(max + 1);
-                this.context.Coin.Add(entity);
-                effected = await this.context.SaveChangesAsync();
+                this.coins.Add(entity);
+                effected = await this.unitOfWork.SaveChangesAsync();
                 if (effected == 1)
                     id = entity.Id;
             }
@@ -96,8 +96,8 @@ namespace MPDex.Services
             int effected = 0;
             try
             {
-                this.context.Update(entity);
-                effected = await this.context.SaveChangesAsync();
+                this.coins.Update(entity);
+                effected = await this.unitOfWork.SaveChangesAsync();
             }
             catch (Exception ex)
             {
@@ -131,8 +131,8 @@ namespace MPDex.Services
             int effected = 0;
             try
             {
-                this.context.Update(entity);
-                effected = await this.context.SaveChangesAsync();
+                this.coins.Update(entity);
+                effected = await this.unitOfWork.SaveChangesAsync();
             }
             catch (Exception ex)
             {

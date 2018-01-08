@@ -112,7 +112,7 @@ namespace MPDex.Services.EntityServices
             int effected = 0;
             try
             {
-                this.context.Update(entity);
+                this.context.Remove(entity);
                 effected = await this.context.SaveChangesAsync();
             }
             catch (Exception ex)

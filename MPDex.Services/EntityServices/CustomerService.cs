@@ -1,19 +1,22 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using MPDex.Data;
 using MPDex.Models.Domain;
+using MPDex.Repository;
 
-namespace MPDex.Services.EntityServices
+namespace MPDex.Services
 {
     public class CustomerService : ICustomerService
     {
-        private readonly MPDexDbContext context;
-        private readonly ILogger logger;
+        
+        private readonly IUnitOfWork unitOfWork;
+        private readonly CustomerRepository customers;
+        private readonly ILogger<CustomerService> logger;
 
-        public CustomerService(MPDexDbContext context, ILogger logger)
+        public CustomerService(IUnitOfWork unitOfWork, ILogger<CustomerService> logger)
         {
-            this.context = context;
+            this.unitOfWork = unitOfWork;
+            this.customers = (CustomerRepository)unitOfWork.GetRepository<Customer>();
             this.logger = logger;
         }
 
@@ -23,7 +26,7 @@ namespace MPDex.Services.EntityServices
 
             try
             {
-                result = await context.Customer
+                result = await this.customers.Get()
                     .ToPagedListAsync(pageIndex, pageSize);
             }
             catch (Exception ex)
@@ -40,7 +43,7 @@ namespace MPDex.Services.EntityServices
             Customer result;
             try
             {
-                result = await context.Customer.FindAsync(id);
+                result = await this.customers.FindAsync(id);
             }
             catch (Exception ex)
             {
@@ -58,8 +61,8 @@ namespace MPDex.Services.EntityServices
             try
             {
                 entity.Id = Guid.NewGuid();
-                this.context.Customer.Add(entity);
-                effected = await this.context.SaveChangesAsync();
+                this.customers.Add(entity);
+                effected = await this.unitOfWork.SaveChangesAsync();
                 if (effected == 1)
                     id = entity.Id;
             }
@@ -77,8 +80,8 @@ namespace MPDex.Services.EntityServices
             int effected = 0;
             try
             {
-                this.context.Update(entity);
-                effected = await this.context.SaveChangesAsync();
+                this.customers.Update(entity);
+                effected = await this.unitOfWork.SaveChangesAsync();
             }
             catch (Exception ex)
             {
@@ -112,8 +115,8 @@ namespace MPDex.Services.EntityServices
             int effected = 0;
             try
             {
-                this.context.Update(entity);
-                effected = await this.context.SaveChangesAsync();
+                this.customers.Remove(entity);
+                effected = await this.unitOfWork.SaveChangesAsync();
             }
             catch (Exception ex)
             {

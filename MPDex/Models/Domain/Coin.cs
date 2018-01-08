@@ -10,7 +10,9 @@ namespace MPDex.Models.Domain
     public class Coin : Creatable<short>
     {
         public string Name { get; set; }
-        
+
+        public virtual ICollection<Balance> Balances { get; set; }
         public virtual ICollection<Book> Books { get; set; }
+
     }
 }

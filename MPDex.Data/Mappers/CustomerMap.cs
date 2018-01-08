@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MPDex.Models.Domain;
 
-namespace MPDex.Data.Mapper
+namespace MPDex.Data.Mappers
 {
     /// <summary>
     /// customer mapper

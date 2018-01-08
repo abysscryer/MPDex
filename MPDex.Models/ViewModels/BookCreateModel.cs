@@ -3,7 +3,7 @@ using System;
 
 namespace MPDex.Models.ViewModels
 {
-    public class BookCreateViewModel
+    public class BookCreateModel
     {
         public OrderType BookType { get; set; }
 

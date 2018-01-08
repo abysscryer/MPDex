@@ -1,11 +1,11 @@
 ﻿
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using MPDex.Data.Mapper;
 using MPDex.Models.Domain;
 using MPDex.Data.Models;
 using MPDex.Models.Base;
 using System.Collections.Generic;
+using MPDex.Data.Mappers;
 
 namespace MPDex.Data
 {
@@ -21,19 +21,25 @@ namespace MPDex.Data
         { }
         
         /// <summary>
-        /// customer model
+        /// 고객
         /// </summary>
         public DbSet<Customer> Customer { get; set; }
 
         /// <summary>
-        /// book model
+        /// 예약
         /// </summary>
         public DbSet<Book> Book { get; set; }
 
         /// <summary>
-        /// coin model
+        /// 코인
         /// </summary>
         public DbSet<Coin> Coin { get; set; }
+
+        /// <summary>
+        /// 잔고
+        /// </summary>
+        public DbSet<Balance> Balance { get; set; }
+
 
         /// <summary>
         /// model createing event callback
@@ -42,9 +48,11 @@ namespace MPDex.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
             new CustomerMap(modelBuilder);
             new BookMap(modelBuilder);
             new CoinMap(modelBuilder);
+            new BalanceMap(modelBuilder);
         }
     }
 }

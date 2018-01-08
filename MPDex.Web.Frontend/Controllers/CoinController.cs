@@ -1,15 +1,10 @@
 ﻿using AutoMapper;
 using GenFu;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using MPDex.Data;
 using MPDex.Models.Domain;
 using MPDex.Models.ViewModels;
-using System;
-using System.Threading.Tasks;
-using System.Linq;
 using MPDex.Services;
+using System.Threading.Tasks;
 
 namespace MPDex.Web.Frontend.Controllers
 {
@@ -34,7 +29,7 @@ namespace MPDex.Web.Frontend.Controllers
         }
 
         // GET api/<controller>/5
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public async Task<IActionResult> Get(short id)
         {
             var coin = await this.service.FindAsync(id);
@@ -43,9 +38,9 @@ namespace MPDex.Web.Frontend.Controllers
 
         // POST api/<controller>
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody]CoinCreateViewModel vm)
+        public async Task<IActionResult> Post([FromBody]CoinCreateModel vm)
         {
-            vm = A.New<CoinCreateViewModel>();
+            vm = A.New<CoinCreateModel>();
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -57,13 +52,13 @@ namespace MPDex.Web.Frontend.Controllers
         }
 
         // PUT api/<controller>/5
-        [HttpPut("{id:short}")]
-        public async Task<IActionResult> Put(short id, [FromBody]CoinCreateViewModel vm)
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> Put(short id, [FromBody]CoinCreateModel vm)
         {
             if (id == 0)
                 return NotFound(id);
 
-            vm = A.New<CoinCreateViewModel>();
+            vm = A.New<CoinCreateModel>();
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -77,7 +72,7 @@ namespace MPDex.Web.Frontend.Controllers
         }
 
         // DELETE api/<controller>/5
-        [HttpDelete("{id:short}")]
+        [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(short id)
         {
             if (id == 0)

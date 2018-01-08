@@ -5,7 +5,7 @@ namespace MPDex.Models.Base
     /// <summary>
     /// Base Entity
     /// </summary>
-    public abstract class Entity
+    public abstract class Entity : IEntity
     { }
 
     /// <summary>

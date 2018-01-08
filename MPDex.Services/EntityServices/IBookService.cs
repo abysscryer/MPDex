@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace MPDex.Services.EntityServices
+namespace MPDex.Services
 {
     public interface IBookService
     {

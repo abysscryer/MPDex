@@ -8,10 +8,10 @@ namespace MPDex.Web.Frontend.Models
     {
         public MappingProfile()
         {
-            CreateMap<Customer, CustomerCreateViewModel>();
-            CreateMap<CustomerCreateViewModel, Customer>();
-            CreateMap<Book, BookCreateViewModel>();
-            CreateMap<BookCreateViewModel, Book>();
+            CreateMap<Customer, CustomerCreateModel>();
+            CreateMap<CustomerCreateModel, Customer>();
+            CreateMap<Book, BookCreateModel>();
+            CreateMap<BookCreateModel, Book>();
         }
     }
 }

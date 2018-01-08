@@ -1,80 +1,66 @@
 ﻿using AutoMapper;
 using GenFu;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using MPDex.Models.Domain;
 using MPDex.Models.ViewModels;
+using MPDex.Services;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace MPDex.Web.Frontend.Controllers
 {
     [Route("api/[controller]")]
     public class CustomerController : Controller
     {
-        private readonly IUnitOfWork unitOfWork;
-        private readonly IRepository<Customer> repository;
-        private readonly ILogger<CustomerController> logger;
+        private readonly ICustomerService service;
 
-        public CustomerController(IUnitOfWork unitOfWork, ILogger<CustomerController> logger)
+        public CustomerController(ICustomerService service)
         {
-            this.repository = unitOfWork.GetRepository<Customer>();
-            this.unitOfWork = unitOfWork;
-            this.logger = logger;
+            this.service = service;
         }
 
         // GET: api/<controller>
         [HttpGet]
         public async Task<IActionResult> Get(int pageIndex=0, int pageSize=20)
         {
-            var customers = await this.repository
-                .GetPagedListAsync(include: i => i
-                        .Include(c => c.Books)
-                        .ThenInclude(b => b.Coin.Name),
-                    pageIndex: pageIndex, pageSize: pageSize);
+            var customers = await this.service.GetAsync(pageIndex, pageSize);
 
             return Ok(customers);
         }
 
         // GET api/<controller>/5
-        [HttpGet("{id}")]
+        [HttpGet("{id:guid}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var customer = await this.repository.FindAsync(id);
+            var customer = await this.service.FindAsync(id);
             return Ok(customer);
         }
 
         // POST api/<controller>
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody]CustomerCreateViewModel vm)
+        public async Task<IActionResult> Post([FromBody]CustomerCreateModel vm)
         {
-            vm = A.New<CustomerCreateViewModel>();
+            vm = A.New<CustomerCreateModel>();
 
             if (!ModelState.IsValid) 
                 return BadRequest(ModelState);
 
             var customer = Mapper.Map<Customer>(vm);
+            var id = await this.service.AddAsync(customer);
             
-            this.repository.Insert(customer);
-            var effected = await this.unitOfWork.SaveChangesAsync();
-
-            return Ok(effected == 1);
+            return Ok(id);
         }
 
         // PUT api/<controller>/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(string id, [FromBody]CustomerCreateViewModel vm)
+        [HttpPut("{id:guid}")]
+        public async Task<IActionResult> Put(string id, [FromBody]CustomerCreateModel vm)
         {
             Guid guid;
 
             if (!Guid.TryParse(id, out guid))
                 return BadRequest();
 
-            vm = A.New<CustomerCreateViewModel>();
+            vm = A.New<CustomerCreateModel>();
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -82,14 +68,13 @@ namespace MPDex.Web.Frontend.Controllers
             var customer = Mapper.Map<Customer>(vm);
             customer.Id = guid;
 
-            this.repository.Update(customer);
-            var effected = await this.unitOfWork.SaveChangesAsync();
+            var isSuccess = await this.service.UpdateAsync(customer);
 
-            return Ok(effected == 1);
+            return Ok(isSuccess);
         }
 
         // DELETE api/<controller>/5
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(string id)
         {
             Guid guid;
@@ -97,9 +82,8 @@ namespace MPDex.Web.Frontend.Controllers
             if (!Guid.TryParse(id, out guid))
                 return BadRequest();
 
-            this.repository.Delete(guid);
-            var effected = await this.unitOfWork.SaveChangesAsync();
-            return Ok(effected==1);
+            var isSuccess = await this.service.RemoveAsync(guid);
+            return Ok(isSuccess);
         }
     }
 }

@@ -1,11 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MPDex.Models.Domain;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace MPDex.Data.Mapper
+namespace MPDex.Data.Mappers
 {
     /// <summary>
     /// book mapper
@@ -36,8 +32,8 @@ namespace MPDex.Data.Mapper
 
             // build fields
             builder.Entity<Book>(n => {
-                n.Property(b => b.Id)
-                    .HasDefaultValueSql("newid()");
+                //n.Property(b => b.Id)
+                    //.HasDefaultValueSql("newid()");
                 n.Property(b => b.Price)
                     .IsRequired()
                     .HasColumnType("decimal(20, 8)");
