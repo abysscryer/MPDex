@@ -3,7 +3,7 @@
     /// <summary>
     /// book type
     /// </summary>
-    public enum BookType : byte
+    public enum OrderType : byte
     {
         Buy = 1, Sell = 2
     }

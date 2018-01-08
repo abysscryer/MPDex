@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using MPDex.Models;
+using MPDex.Models.Domain;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -22,14 +22,17 @@ namespace MPDex.Data.Mapper
             builder.Entity<Book>()
                 .HasKey(t => t.Id);
 
+            // build forign key constratins with coin
             builder.Entity<Book>()
                 .HasOne(b => b.Coin)
                 .WithMany(c => c.Books)
-                .HasForeignKey();
-            
+                .HasForeignKey(b => b.CoinId);
+
+            // build forign key constratins with customer
             builder.Entity<Book>()
                 .HasOne(b => b.Customer)
-                .WithMany(c => c.Books);
+                .WithMany(c => c.Books)
+                .HasForeignKey(b => b.CustomerId);
 
             // build fields
             builder.Entity<Book>(n => {

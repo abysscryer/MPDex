@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MPDex.Models;
+using MPDex.Models.Domain;
 
 namespace MPDex.Data.Mapper
 {
@@ -15,8 +15,9 @@ namespace MPDex.Data.Mapper
         public CustomerMap(ModelBuilder builder)
         {
             // build constraints
-            builder.Entity<Customer>().HasKey(c => c.Id);
-            
+            builder.Entity<Customer>()
+                .HasKey(c => c.Id);
+
             // build fields
             builder.Entity<Customer>(n =>
             {

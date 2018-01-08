@@ -5,9 +5,9 @@ namespace MPDex.Models.Base
     /// <summary>
     /// editable model interface
     /// </summary>
-    public interface IEditable
+    public interface IEditable : ICreatable
     {
-        DateTime OnCreated { get; set; }
         DateTime? OnUpdated { get; set; }
+        byte[] RowVersion { get; set; }
     }
 }

@@ -1,13 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using GenFu;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using MPDex.Models;
+using MPDex.Models.Domain;
 using MPDex.Models.ViewModels;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
-using GenFu;
-using MPDex.Data;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -31,11 +31,10 @@ namespace MPDex.Web.Frontend.Controllers
         [HttpGet]
         public async Task<IActionResult> Get(int pageIndex=0, int pageSize=20)
         {
-            var customers = await this.unitOfWork
-                .GetRepository<Customer>()
-                .GetPagedListAsync(include: source => source
-                        .Include(customer => customer.Books)
-                        .ThenInclude(book => book.Coin),
+            var customers = await this.repository
+                .GetPagedListAsync(include: i => i
+                        .Include(c => c.Books)
+                        .ThenInclude(b => b.Coin.Name),
                     pageIndex: pageIndex, pageSize: pageSize);
 
             return Ok(customers);
@@ -51,7 +50,7 @@ namespace MPDex.Web.Frontend.Controllers
 
         // POST api/<controller>
         [HttpPost]
-        public async Task<IActionResult> Post(CustomerCreateViewModel vm)
+        public async Task<IActionResult> Post([FromBody]CustomerCreateViewModel vm)
         {
             vm = A.New<CustomerCreateViewModel>();
 
@@ -63,26 +62,44 @@ namespace MPDex.Web.Frontend.Controllers
             this.repository.Insert(customer);
             var effected = await this.unitOfWork.SaveChangesAsync();
 
-            return Ok(effected);
+            return Ok(effected == 1);
         }
 
         // PUT api/<controller>/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(Guid id, [FromBody]Customer value)
+        public async Task<IActionResult> Put(string id, [FromBody]CustomerCreateViewModel vm)
         {
-            this.repository.Update(value);
+            Guid guid;
+
+            if (!Guid.TryParse(id, out guid))
+                return BadRequest();
+
+            vm = A.New<CustomerCreateViewModel>();
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var customer = Mapper.Map<Customer>(vm);
+            customer.Id = guid;
+
+            this.repository.Update(customer);
             var effected = await this.unitOfWork.SaveChangesAsync();
-            return Ok(effected);
+
+            return Ok(effected == 1);
         }
 
         // DELETE api/<controller>/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(Guid id)
+        public async Task<IActionResult> Delete(string id)
         {
-            var customer = await this.repository.FindAsync(id);
-            this.repository.Delete(customer);
+            Guid guid;
+
+            if (!Guid.TryParse(id, out guid))
+                return BadRequest();
+
+            this.repository.Delete(guid);
             var effected = await this.unitOfWork.SaveChangesAsync();
-            return Ok(effected);
+            return Ok(effected==1);
         }
     }
 }

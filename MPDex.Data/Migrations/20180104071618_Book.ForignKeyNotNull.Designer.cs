@@ -12,9 +12,10 @@ using System;
 namespace MPDex.Data.Migrations
 {
     [DbContext(typeof(MPDexDbContext))]
-    partial class MPDexDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180104071618_Book.ForignKeyNotNull")]
+    partial class BookForignKeyNotNull
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -200,7 +201,7 @@ namespace MPDex.Data.Migrations
 
                     b.Property<decimal>("Stock")
                         .HasColumnType("decimal(20, 8)");
-                    
+
                     b.Property<DateTime>("OnCreated")
                         .ValueGeneratedOnAdd()
                         .HasDefaultValueSql("getdate()");
@@ -261,7 +262,7 @@ namespace MPDex.Data.Migrations
                     b.Property<string>("GivenName")
                         .IsRequired()
                         .HasMaxLength(16);
-
+                    
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(36)
@@ -270,7 +271,7 @@ namespace MPDex.Data.Migrations
                     b.Property<string>("CellPhone")
                         .HasMaxLength(20)
                         .IsUnicode(false);
-                    
+
                     b.Property<DateTime>("OnCreated")
                         .ValueGeneratedOnAdd()
                         .HasDefaultValueSql("getdate()");

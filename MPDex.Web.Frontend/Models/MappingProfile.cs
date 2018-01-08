@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using MPDex.Models;
+using MPDex.Models.Domain;
 using MPDex.Models.ViewModels;
 
 namespace MPDex.Web.Frontend.Models

@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MPDex.Models;
+using MPDex.Models.Domain;
 
 namespace MPDex.Data.Mapper
 {
@@ -13,11 +13,7 @@ namespace MPDex.Data.Mapper
             // build primary key
             builder.Entity<Coin>()
                 .HasKey(c => c.Id);
-                
-            builder.Entity<Coin>()
-                .Property(c => c.Id)
-                .ValueGeneratedNever();
-
+            
             // build forign key constrains
             builder.Entity<Coin>()
                 .HasMany(c => c.Books)
@@ -25,6 +21,8 @@ namespace MPDex.Data.Mapper
 
             //build fields
             builder.Entity<Coin>(n => {
+                n.Property(c => c.Id)
+                    .ValueGeneratedNever();
                 n.Property(c => c.Name)
                     .IsRequired()
                     .HasMaxLength(16);

@@ -1,30 +1,29 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MPDex.Data;
 using MPDex.Models.Domain;
-using System;
-using System.Threading.Tasks;
 
-namespace MPDex.Services
+namespace MPDex.Services.EntityServices
 {
-    public class CoinService : ICoinService
+    public class CustomerService : ICustomerService
     {
         private readonly MPDexDbContext context;
         private readonly ILogger logger;
 
-        public CoinService(MPDexDbContext context, ILogger logger)
+        public CustomerService(MPDexDbContext context, ILogger logger)
         {
             this.context = context;
             this.logger = logger;
         }
 
-        public async Task<IPagedList<Coin>> GetAsync(int pageIndex = 1, int pageSize = 20)
+        public async Task<IPagedList<Customer>> GetAsync(int pageIndex = 1, int pageSize = 20)
         {
-            IPagedList<Coin> result;
+            IPagedList<Customer> result;
 
             try
             {
-                result = await context.Coin
+                result = await context.Customer
                     .ToPagedListAsync(pageIndex, pageSize);
             }
             catch (Exception ex)
@@ -36,12 +35,12 @@ namespace MPDex.Services
             return result;
         }
 
-        public async Task<Coin> FindAsync(short id)
+        public async Task<Customer> FindAsync(Guid id)
         {
-            Coin result;
+            Customer result;
             try
             {
-                result = await context.Coin.FindAsync(id);
+                result = await context.Customer.FindAsync(id);
             }
             catch (Exception ex)
             {
@@ -52,32 +51,14 @@ namespace MPDex.Services
             return result;
         }
 
-        public async Task<short> Max()
+        public async Task<Guid> AddAsync(Customer entity)
         {
-            short max;
-
-            try
-            {
-                max = await context.Coin.MaxAsync(x => x.Id);
-            }
-            catch (Exception ex )
-            {
-                logger.LogError(ex, ex.Message);
-                throw;
-            }
-
-            return max;
-        }
-
-        public async Task<short> AddAsync(Coin entity)
-        {
-            short id = 0;
+            Guid id;
             int effected;
             try
             {
-                var max = await this.Max();
-                entity.Id = Convert.ToInt16(max + 1);
-                this.context.Coin.Add(entity);
+                entity.Id = Guid.NewGuid();
+                this.context.Customer.Add(entity);
                 effected = await this.context.SaveChangesAsync();
                 if (effected == 1)
                     id = entity.Id;
@@ -91,7 +72,7 @@ namespace MPDex.Services
             return id;
         }
 
-        public async Task<bool> UpdateAsync(Coin entity)
+        public async Task<bool> UpdateAsync(Customer entity)
         {
             int effected = 0;
             try
@@ -108,10 +89,10 @@ namespace MPDex.Services
             return effected == 1;
         }
 
-        public async Task<bool> RemoveAsync(short id)
+        public async Task<bool> RemoveAsync(Guid id)
         {
             var isSuccess = false;
-            Coin entity;
+            Customer entity;
             try
             {
                 entity = await this.FindAsync(id);
@@ -126,7 +107,7 @@ namespace MPDex.Services
             return isSuccess;
         }
 
-        public async Task<bool> RemoveAsync(Coin entity)
+        public async Task<bool> RemoveAsync(Customer entity)
         {
             int effected = 0;
             try

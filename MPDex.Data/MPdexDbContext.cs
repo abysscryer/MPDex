@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using MPDex.Data.Mapper;
-using MPDex.Models;
+using MPDex.Models.Domain;
 using MPDex.Data.Models;
 using MPDex.Models.Base;
 using System.Collections.Generic;

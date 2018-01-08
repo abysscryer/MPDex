@@ -5,7 +5,7 @@ namespace MPDex.Models.ViewModels
 {
     public class BookCreateViewModel
     {
-        public BookType BookType { get; set; }
+        public OrderType BookType { get; set; }
 
         public decimal Price { get; set; }
 

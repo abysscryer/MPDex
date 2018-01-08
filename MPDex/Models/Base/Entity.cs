@@ -5,14 +5,14 @@ namespace MPDex.Models.Base
     /// <summary>
     /// Base Entity
     /// </summary>
-    public abstract class BaseEntity
+    public abstract class Entity
     { }
 
     /// <summary>
     /// Generic Base Entity
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public abstract class BaseEntity<T> : BaseEntity, IEntity<T>
+    public abstract class Entity<T> : Entity, IEntity<T>
     {
         public virtual T Id { get; set; }
     }

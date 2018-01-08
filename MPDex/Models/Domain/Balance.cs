@@ -1,24 +1,20 @@
 ﻿using MPDex.Models.Base;
 using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace MPDex.Models.Domain
 {
     /// <summary>
-    /// 예약
+    /// 잔고
     /// </summary>
-    public class Book : Auditable<Guid>
+    public class Balance : Entity
     {
-        public OrderType BookType { get; set; }
+        public decimal Amount { get; set; } 
 
-        public decimal Price { get; set; }
-
-        public decimal Amount { get; set; }
-
-        public decimal Stock { get; set; }
-        
         public Guid CustomerId { get; set; }
         public virtual Customer Customer { get; set; }
-        
+
         public short CoinId { get; set; }
         public virtual Coin Coin { get; set; }
     }
