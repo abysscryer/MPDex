@@ -23,8 +23,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MPDex.Data\MPDex.Data.csproj" />
+    <ProjectReference Include="..\MPDex.Models\MPDex.Models.csproj" />
     <ProjectReference Include="..\MPDex.Services\MPDex.Services.csproj" />
-    <ProjectReference Include="..\MPDex\MPDex.csproj" />
   </ItemGroup>
 
 </Project>

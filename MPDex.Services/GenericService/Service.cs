@@ -54,7 +54,7 @@ namespace MPDex.Services
             return entity;
         }
 
-        public async Task<bool> AddAsync(TEntity entity)
+        public async virtual Task<bool> AddAsync(TEntity entity)
         {
             var effected = 0;
             try

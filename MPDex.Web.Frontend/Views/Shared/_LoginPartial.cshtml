@@ -1,8 +1,8 @@
 @using Microsoft.AspNetCore.Identity
-@using MPDex.Data.Models
+@using MPDex.Data
 
-@inject SignInManager<MPDexUser> SignInManager
-@inject UserManager<MPDexUser> UserManager
+@inject SignInManager<Operator> SignInManager
+@inject UserManager<Operator> UserManager
 
 @if (SignInManager.IsSignedIn(User))
 {

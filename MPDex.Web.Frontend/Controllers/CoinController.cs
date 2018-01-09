@@ -47,13 +47,13 @@ namespace MPDex.Web.Frontend.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody]CoinCreateModel vm)
         {
-            vm = A.New<CoinCreateModel>();
+            //vm = A.New<CoinCreateModel>();
 
-            if (!ModelState.IsValid)
+             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             var coin = Mapper.Map<Coin>(vm);
-            var id = await this.service.AddAsync(coin);
+            var id = await this.service.AddAsync(coin); 
             
             return Ok(id);
         }

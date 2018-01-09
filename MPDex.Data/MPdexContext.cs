@@ -1,25 +1,23 @@
 ﻿
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using MPDex.Models.Domain;
-using MPDex.Data.Models;
-using MPDex.Models.Base;
-using System.Collections.Generic;
 using MPDex.Data.Mappers;
+using MPDex.Models.Domain;
 
 namespace MPDex.Data
 {
 
-    public class MPDexDbContext : IdentityDbContext<MPDexUser, MPDexRole, string>
+    public class MPDexContext : IdentityDbContext<Operator, OperatorRole, string>
     {
         /// <summary>
         /// constructor
         /// </summary>
         /// <param name="options"></param>
-        public MPDexDbContext(DbContextOptions<MPDexDbContext> options) 
+        public MPDexContext(DbContextOptions<MPDexContext> options) 
             : base(options)
         { }
-        
+
         /// <summary>
         /// 고객
         /// </summary>
@@ -55,4 +53,16 @@ namespace MPDex.Data
             new BalanceMap(modelBuilder);
         }
     }
+
+    /// <summary>
+    /// 관리자
+    /// </summary>
+    public class Operator : IdentityUser
+    { }
+
+    /// <summary>
+    /// 관리자 역할
+    /// </summary>
+    public class OperatorRole : IdentityRole
+    { }
 }

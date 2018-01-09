@@ -1,7 +1,7 @@
 ﻿@using MPDex.Web.Frontend.Views.Manage
 @using MPDex.Data.Models;
 
-@inject SignInManager<MPDexUser> SignInManager
+@inject SignInManager<Operator> SignInManager
 @{
     var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
 }

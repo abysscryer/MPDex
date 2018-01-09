@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using MPDex.Data.Models;
+using MPDex.Data;
 using MPDex.Services;
 using MPDex.Web.Frontend.Services;
 using MPDex.Web.Frontend.Models.AccountViewModels;
@@ -17,14 +17,14 @@ namespace MPDex.Web.Frontend.Controllers
     [Route("[controller]/[action]")]
     public class AccountController : Controller
     {
-        private readonly UserManager<MPDexUser> _userManager;
-        private readonly SignInManager<MPDexUser> _signInManager;
+        private readonly UserManager<Operator> _userManager;
+        private readonly SignInManager<Operator> _signInManager;
         private readonly IEmailSender _emailSender;
         private readonly ILogger _logger;
 
         public AccountController(
-            UserManager<MPDexUser> userManager,
-            SignInManager<MPDexUser> signInManager,
+            UserManager<Operator> userManager,
+            SignInManager<Operator> signInManager,
             IEmailSender emailSender,
             ILogger<AccountController> logger)
         {
@@ -217,7 +217,7 @@ namespace MPDex.Web.Frontend.Controllers
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
-                var user = new MPDexUser { UserName = model.Email, Email = model.Email };
+                var user = new Operator { UserName = model.Email, Email = model.Email };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -307,7 +307,7 @@ namespace MPDex.Web.Frontend.Controllers
                 {
                     throw new ApplicationException("Error loading external login information during confirmation.");
                 }
-                var user = new MPDexUser { UserName = model.Email, Email = model.Email };
+                var user = new Operator { UserName = model.Email, Email = model.Email };
                 var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded)
                 {

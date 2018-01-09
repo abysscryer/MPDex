@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace MPDex.Data.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class InitialCreated : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -53,7 +53,8 @@ namespace MPDex.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<short>(nullable: false),
-                    Name = table.Column<string>(maxLength: 16, nullable: false)
+                    Name = table.Column<string>(maxLength: 16, nullable: false),
+                    OnCreated = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -70,8 +71,7 @@ namespace MPDex.Data.Migrations
                     FamilyName = table.Column<string>(maxLength: 16, nullable: false),
                     GivenName = table.Column<string>(maxLength: 16, nullable: false),
                     NiceName = table.Column<string>(maxLength: 16, nullable: false),
-                    OnCreated = table.Column<DateTime>(nullable: false, defaultValueSql: "getdate()"),
-                    OnUpdated = table.Column<DateTime>(nullable: true)
+                    OnCreated = table.Column<DateTime>(nullable: false, defaultValueSql: "getdate()")
                 },
                 constraints: table =>
                 {
@@ -185,14 +185,39 @@ namespace MPDex.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Balance",
+                columns: table => new
+                {
+                    CustomerId = table.Column<Guid>(nullable: false),
+                    CoinId = table.Column<short>(nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(20, 8)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Balance", x => new { x.CustomerId, x.CoinId });
+                    table.ForeignKey(
+                        name: "FK_Balance_Coin_CoinId",
+                        column: x => x.CoinId,
+                        principalTable: "Coin",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Balance_Customer_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Customer",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Book",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false, defaultValueSql: "newid()"),
+                    Id = table.Column<Guid>(nullable: false),
                     Amount = table.Column<decimal>(type: "decimal(20, 8)", nullable: false),
                     BookType = table.Column<byte>(nullable: false),
-                    CoinId = table.Column<short>(nullable: true),
-                    CustomerId = table.Column<Guid>(nullable: true),
+                    CoinId = table.Column<short>(nullable: false),
+                    CustomerId = table.Column<Guid>(nullable: false),
                     IPAddress = table.Column<string>(unicode: false, maxLength: 36, nullable: false),
                     OnCreated = table.Column<DateTime>(nullable: false, defaultValueSql: "getdate()"),
                     OnUpdated = table.Column<DateTime>(nullable: true),
@@ -208,13 +233,13 @@ namespace MPDex.Data.Migrations
                         column: x => x.CoinId,
                         principalTable: "Coin",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Book_Customer_CustomerId",
                         column: x => x.CustomerId,
                         principalTable: "Customer",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -257,6 +282,11 @@ namespace MPDex.Data.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Balance_CoinId",
+                table: "Balance",
+                column: "CoinId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Book_CoinId",
                 table: "Book",
                 column: "CoinId");
@@ -283,6 +313,9 @@ namespace MPDex.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "Balance");
 
             migrationBuilder.DropTable(
                 name: "Book");

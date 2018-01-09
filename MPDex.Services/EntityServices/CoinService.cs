@@ -34,5 +34,12 @@ namespace MPDex.Services
 
             return max;
         }
+
+        public override async Task<bool> AddAsync(Coin entity)
+        {
+            var max = await this.GetMaxAsync();
+            entity.Id = (short)(max + 1);
+            return await base.AddAsync(entity);
+        }
     }
 }

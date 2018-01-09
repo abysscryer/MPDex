@@ -8,7 +8,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
 using MPDex.Data;
-using MPDex.Data.Models;
 using MPDex.Repository;
 using MPDex.Services;
 
@@ -26,16 +25,16 @@ namespace MPDex.Web.Frontend
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<MPDexDbContext>(options => options
+            services.AddDbContext<MPDexContext>(options => options
                 .UseLoggerFactory(MyLoggerFactory)
                 .UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), 
                     b => b.MigrationsAssembly("MPDex.Data")));
 
-            services.AddIdentity<MPDexUser, MPDexRole>()
-                .AddEntityFrameworkStores<MPDexDbContext>()
+            services.AddIdentity<Operator, OperatorRole>()
+                .AddEntityFrameworkStores<MPDexContext>()
                 .AddDefaultTokenProviders();
 
-            services.AddUnitOfWork<MPDexDbContext>();
+            services.AddUnitOfWork<MPDexContext>();
 
             services.AddScoped<ICoinService, CoinService>();
             services.AddScoped<ICustomerService, CustomerService>();

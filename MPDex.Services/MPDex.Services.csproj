@@ -5,10 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MPDex.Data\MPDex.Data.csproj" />
     <ProjectReference Include="..\MPDex.Models\MPDex.Models.csproj" />
     <ProjectReference Include="..\MPDex.Repository\MPDex.Repository.csproj" />
-    <ProjectReference Include="..\MPDex\MPDex.csproj" />
   </ItemGroup>
 
 </Project>

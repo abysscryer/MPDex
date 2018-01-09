@@ -12,6 +12,8 @@ namespace MPDex.Web.Frontend.Models
             CreateMap<CustomerCreateModel, Customer>();
             CreateMap<Book, BookCreateModel>();
             CreateMap<BookCreateModel, Book>();
+            CreateMap<Coin, CoinCreateModel>();
+            CreateMap<CoinCreateModel, Coin>();
         }
     }
 }

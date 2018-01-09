@@ -11,10 +11,11 @@ using System;
 
 namespace MPDex.Data.Migrations
 {
-    [DbContext(typeof(MPDexDbContext))]
-    partial class MPDexDbContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(MPDexContext))]
+    [Migration("20180109091837_Coin.OnCreated has default value")]
+    partial class CoinOnCreatedhasdefaultvalue
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -105,31 +106,7 @@ namespace MPDex.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("MPDex.Data.Models.MPDexRole", b =>
-                {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken();
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(256);
-
-                    b.Property<string>("NormalizedName")
-                        .HasMaxLength(256);
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasName("RoleNameIndex")
-                        .HasFilter("[NormalizedName] IS NOT NULL");
-
-                    b.ToTable("AspNetRoles");
-                });
-
-            modelBuilder.Entity("MPDex.Data.Models.MPDexUser", b =>
+            modelBuilder.Entity("MPDex.Data.Operator", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
@@ -178,6 +155,30 @@ namespace MPDex.Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
+                });
+
+            modelBuilder.Entity("MPDex.Data.OperatorRole", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken();
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256);
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
+
+                    b.ToTable("AspNetRoles");
                 });
 
             modelBuilder.Entity("MPDex.Models.Domain.Balance", b =>
@@ -250,7 +251,9 @@ namespace MPDex.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(16);
 
-                    b.Property<DateTime>("OnCreated");
+                    b.Property<DateTime>("OnCreated")
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValueSql("getdate()");
 
                     b.HasKey("Id");
 
@@ -295,7 +298,7 @@ namespace MPDex.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
-                    b.HasOne("MPDex.Data.Models.MPDexRole")
+                    b.HasOne("MPDex.Data.OperatorRole")
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -303,7 +306,7 @@ namespace MPDex.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("MPDex.Data.Models.MPDexUser")
+                    b.HasOne("MPDex.Data.Operator")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -311,7 +314,7 @@ namespace MPDex.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("MPDex.Data.Models.MPDexUser")
+                    b.HasOne("MPDex.Data.Operator")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -319,12 +322,12 @@ namespace MPDex.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
-                    b.HasOne("MPDex.Data.Models.MPDexRole")
+                    b.HasOne("MPDex.Data.OperatorRole")
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("MPDex.Data.Models.MPDexUser")
+                    b.HasOne("MPDex.Data.Operator")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -332,7 +335,7 @@ namespace MPDex.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("MPDex.Data.Models.MPDexUser")
+                    b.HasOne("MPDex.Data.Operator")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);

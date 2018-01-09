@@ -9,8 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MPDex.Data\MPDex.Data.csproj" />
-    <ProjectReference Include="..\MPDex\MPDex.csproj" />
+    <ProjectReference Include="..\MPDex.Models\MPDex.Models.csproj" />
   </ItemGroup>
 
 </Project>
