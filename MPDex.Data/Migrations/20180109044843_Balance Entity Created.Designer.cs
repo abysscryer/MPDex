@@ -12,9 +12,10 @@ using System;
 namespace MPDex.Data.Migrations
 {
     [DbContext(typeof(MPDexDbContext))]
-    partial class MPDexDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180109044843_Balance Entity Created")]
+    partial class BalanceEntityCreated
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -287,6 +288,11 @@ namespace MPDex.Data.Migrations
                     b.Property<DateTime>("OnCreated")
                         .ValueGeneratedOnAdd()
                         .HasDefaultValueSql("getdate()");
+
+                    b.Property<DateTime?>("OnUpdated")
+                        .ValueGeneratedOnUpdate();
+
+                    b.Property<byte[]>("RowVersion");
 
                     b.HasKey("Id");
 

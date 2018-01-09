@@ -21,7 +21,7 @@ namespace MPDex.Web.Frontend.Controllers
 
         // GET: api/<controller>
         [HttpGet]
-        public async Task<IActionResult> Get(int pageIndex = 1, int pageSize = 20)
+        public async Task<IActionResult> Get(int pageIndex = 0, int pageSize = 20)
         {
             var coins = await this.service.GetAsync(pageIndex, pageSize);
  
@@ -32,7 +32,14 @@ namespace MPDex.Web.Frontend.Controllers
         [HttpGet("{id:int}")]
         public async Task<IActionResult> Get(short id)
         {
+            if(id == 0)
+                return BadRequest(id);
+
             var coin = await this.service.FindAsync(id);
+
+            if (coin == null)
+                return NotFound(id);
+
             return Ok(coin);
         }
 
@@ -56,7 +63,7 @@ namespace MPDex.Web.Frontend.Controllers
         public async Task<IActionResult> Put(short id, [FromBody]CoinCreateModel vm)
         {
             if (id == 0)
-                return NotFound(id);
+                return BadRequest(id);
 
             vm = A.New<CoinCreateModel>();
 
@@ -76,7 +83,7 @@ namespace MPDex.Web.Frontend.Controllers
         public async Task<IActionResult> Delete(short id)
         {
             if (id == 0)
-                return NotFound();
+                return BadRequest(id);
 
             var isSuccess = await this.service.RemoveAsync(id);
             return Ok(isSuccess); 

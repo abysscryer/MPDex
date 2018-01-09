@@ -32,7 +32,14 @@ namespace MPDex.Web.Frontend.Controllers
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> Get(Guid id)
         {
+            if (id == Guid.Empty)
+                return BadRequest(id);
+
             var customer = await this.service.FindAsync(id);
+
+            if (customer == null)
+                return NotFound(id);
+
             return Ok(customer);
         }
 
@@ -53,12 +60,10 @@ namespace MPDex.Web.Frontend.Controllers
 
         // PUT api/<controller>/5
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> Put(string id, [FromBody]CustomerCreateModel vm)
+        public async Task<IActionResult> Put(Guid id, [FromBody]CustomerCreateModel vm)
         {
-            Guid guid;
-
-            if (!Guid.TryParse(id, out guid))
-                return BadRequest();
+            if (id == Guid.Empty)
+                return BadRequest(id);
 
             vm = A.New<CustomerCreateModel>();
 
@@ -66,7 +71,7 @@ namespace MPDex.Web.Frontend.Controllers
                 return BadRequest(ModelState);
 
             var customer = Mapper.Map<Customer>(vm);
-            customer.Id = guid;
+            customer.Id = id;
 
             var isSuccess = await this.service.UpdateAsync(customer);
 
@@ -75,14 +80,12 @@ namespace MPDex.Web.Frontend.Controllers
 
         // DELETE api/<controller>/5
         [HttpDelete("{id:guid}")]
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> Delete(Guid id)
         {
-            Guid guid;
+            if (id == Guid.Empty)
+                return BadRequest(id);
 
-            if (!Guid.TryParse(id, out guid))
-                return BadRequest();
-
-            var isSuccess = await this.service.RemoveAsync(guid);
+            var isSuccess = await this.service.RemoveAsync(id);
             return Ok(isSuccess);
         }
     }

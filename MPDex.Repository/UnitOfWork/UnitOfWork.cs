@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MPDex.Models.Base;
-using MPDex.Models.Domain;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +17,14 @@ namespace MPDex.Repository
         public UnitOfWork(TContext context)
         {
             this.context = context ?? throw new ArgumentNullException(nameof(context));
+
+            this.CustomerRepository = new CustomerRepository(this.context);
+            this.CoinRepository = new CoinRepository(this.context);
         }
+
+        public ICustomerRepository CustomerRepository { get; }
+
+        public ICoinRepository CoinRepository { get; }
 
         /// <summary>
         /// Gets the db context.
@@ -42,7 +48,7 @@ namespace MPDex.Repository
             //if (type.Equals(typeof(Customer)))
             //    return (ICustomerRepository)repositories[type];
 
-            return (IRepository< TEntity>)repositories[type];
+            return (IRepository<TEntity>)repositories[type];
         }
 
         /// <summary>

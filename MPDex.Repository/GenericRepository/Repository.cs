@@ -4,6 +4,7 @@ using MPDex.Models.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -29,6 +30,11 @@ namespace MPDex.Repository
         public IQueryable<TEntity> Get()
         {
             return this.dbSet;
+        }
+
+        public IEnumerable<TEntity> GetBy(Expression<Func<TEntity, bool>> predicate)
+        {
+            return this.dbSet.Where(predicate).AsEnumerable();
         }
 
         public async Task<TEntity> FindAsync(params object[] keyValues)

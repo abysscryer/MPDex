@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using MPDex.Models.Domain;
 
 namespace MPDex.Repository
@@ -9,5 +11,4 @@ namespace MPDex.Repository
             : base(dbContext)
         { }
     }
-
 }

@@ -42,8 +42,6 @@ namespace MPDex.Data.Mappers
                 n.Property(c => c.OnCreated)
                     .IsRequired()
                     .HasDefaultValueSql("getdate()");
-                n.Property(c => c.OnUpdated)
-                    .ValueGeneratedOnUpdate();
             }); 
         }
     }

@@ -12,9 +12,10 @@ using System;
 namespace MPDex.Data.Migrations
 {
     [DbContext(typeof(MPDexDbContext))]
-    partial class MPDexDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180109045514_Customer Entity Created to Creatable")]
+    partial class CustomerEntityCreatedtoCreatable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

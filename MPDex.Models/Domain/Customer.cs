@@ -7,7 +7,7 @@ namespace MPDex.Models.Domain
     /// <summary>
     /// 고객
     /// </summary>
-    public class Customer : Editable<Guid>
+    public class Customer : Creatable<Guid>
     {
         public string NiceName { get; set; }
         public string FamilyName { get; set; }

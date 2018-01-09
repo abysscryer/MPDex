@@ -12,8 +12,7 @@ namespace MPDex.Repository
 
         public async Task<short> MaxAsync()
         {
-            var coin = await this.dbSet.MaxAsync();
-            return coin == null ? (short)0 : coin.Id;
+            return await this.dbSet.MaxAsync(x => x.Id);
         }
     }
 }
