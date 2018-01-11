@@ -12,9 +12,10 @@ using System;
 namespace MPDex.Data.Migrations
 {
     [DbContext(typeof(MPDexContext))]
-    partial class MPDexContextModelSnapshot : ModelSnapshot
+    [Migration("20180111043018_NiceName to NickName")]
+    partial class NiceNametoNickName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

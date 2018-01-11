@@ -82,8 +82,7 @@ namespace MPDex.Services
         /// </summary>
         internal PagedList() => Items = new T[0];
     }
-
-
+    
     /// <summary>
     /// Provides the implementation of the <see cref="IPagedList{T}"/> and converter.
     /// </summary>

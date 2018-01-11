@@ -4,9 +4,8 @@ using System.Text;
 
 namespace MPDex.Models.ViewModels
 {
-    public class CustomerCreateModel
+    public class CustomerViewModel
     {
-        public Guid Id { get; set; }
         public string NickName { get; set; }
         public string FamilyName { get; set; }
         public string GivenName { get; set; }

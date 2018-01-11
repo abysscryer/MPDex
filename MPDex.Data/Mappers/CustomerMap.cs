@@ -23,7 +23,7 @@ namespace MPDex.Data.Mappers
             {
                 n.Property(b => b.Id)
                     .HasDefaultValueSql("newid()");
-                n.Property(c => c.NiceName)
+                n.Property(c => c.NickName)
                     .IsRequired()
                     .HasMaxLength(16);
                 n.Property(c => c.FamilyName)

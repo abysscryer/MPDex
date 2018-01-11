@@ -1,4 +1,6 @@
-﻿using MPDex.Models.Base;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using MPDex.Models.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,15 +9,23 @@ using System.Threading.Tasks;
 
 namespace MPDex.Repository
 {
-    public interface IRepository<TEntity> 
-        where TEntity : Entity
+    public interface IRepository<EM> : IRepository
+        where EM : Entity
     {
-        IQueryable<TEntity> Get();
-        IEnumerable<TEntity> GetBy(Expression<Func<TEntity, bool>> predicate);
-        Task<TEntity> FindAsync(params object[] keyValues);
-        void Add(TEntity entity);
-        void Update(TEntity entity);
-        void Remove(TEntity entity);
+        DbSet<EM> Entitis { get; }
+        IQueryable<VM> Get<VM>(Expression<Func<EM, VM>> selector,
+            Expression<Func<EM, bool>> predicate = null,
+            Func<IQueryable<EM>, IOrderedQueryable<EM>> orderBy = null,
+            Func<IQueryable<EM>, IIncludableQueryable<EM, object>> include = null,
+            int pageIndex = 0,
+            int pageSize = 20,
+            bool disableTracking = true) 
+            where VM : class;
+        IEnumerable<EM> GetBy(Expression<Func<EM, bool>> predicate);
+        Task<EM> FindAsync(params object[] keys);
+        void Add(EM em);
+        void Update(EM em);
+        void Remove(EM em);
     }
 
     public interface IRepository { }

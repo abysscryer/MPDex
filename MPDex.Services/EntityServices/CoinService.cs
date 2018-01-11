@@ -3,15 +3,21 @@ using MPDex.Repository;
 using MPDex.Models.Domain;
 using System;
 using System.Threading.Tasks;
+using MPDex.Models.ViewModels;
+using AutoMapper;
+using System.Linq.Expressions;
+using System.Linq;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace MPDex.Services
 {
-    public class CoinService : Service<Coin>, ICoinService
+    public class CoinService : Service<Coin, CoinCreateModel, CoinUpdateModel, CoinViewModel>, ICoinService
     {
         private readonly ICoinRepository repository;
         private readonly ILogger<CoinService> logger;
 
-        public CoinService(IUnitOfWork unitOfWork, ILogger<CoinService> logger , ILogger<Service<Coin>> genericLogger)
+        public CoinService(IUnitOfWork unitOfWork, ILogger<CoinService> logger, 
+                           ILogger<Service<Coin, CoinCreateModel, CoinUpdateModel, CoinViewModel>> genericLogger)
             : base(unitOfWork, genericLogger)
         {
             this.repository = unitOfWork.CoinRepository;
@@ -35,11 +41,12 @@ namespace MPDex.Services
             return max;
         }
 
-        public override async Task<bool> AddAsync(Coin entity)
+        public override async Task<CoinViewModel> AddAsync(CoinCreateModel cModel)
         {
-            var max = await this.GetMaxAsync();
-            entity.Id = (short)(max + 1);
-            return await base.AddAsync(entity);
+            var id = await this.GetMaxAsync();
+            cModel.Id = (short)++id;
+
+            return await base.AddAsync(cModel);
         }
     }
 }

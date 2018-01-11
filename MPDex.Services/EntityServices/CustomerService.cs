@@ -1,23 +1,33 @@
 ﻿using System;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.Extensions.Logging;
 using MPDex.Models.Base;
 using MPDex.Models.Domain;
+using MPDex.Models.ViewModels;
 using MPDex.Repository;
 
 namespace MPDex.Services
 {
-    public class CustomerService : Service<Customer>, ICustomerService
+    public class CustomerService : Service<Customer, CustomerCreateModel, CustomerUpdateModel, CustomerViewModel>, ICustomerService
     {
-        
+
         private readonly ICustomerRepository repository;
         private readonly ILogger<CustomerService> logger;
 
-        public CustomerService(IUnitOfWork unitOfWork, ILogger<CustomerService> logger, ILogger<Service<Customer>> genericLogger)
+        public CustomerService(IUnitOfWork unitOfWork, ILogger<CustomerService> logger, 
+                               ILogger<Service<Customer, CustomerCreateModel, CustomerUpdateModel, CustomerViewModel>> genericLogger)
             : base(unitOfWork, genericLogger)
         {
             this.repository = unitOfWork.CustomerRepository;
             this.logger = logger;
+        }
+
+        public override async Task<CustomerViewModel> AddAsync(CustomerCreateModel cModel)
+        {
+            cModel.Id = Guid.NewGuid();
+
+            return await base.AddAsync(cModel);
         }
     }
 }

@@ -21,11 +21,13 @@ namespace MPDex.Web.Frontend.Controllers
 
         // GET: api/<controller>
         [HttpGet]
-        public async Task<IActionResult> Get(int pageIndex=0, int pageSize=20)
+        public async Task<IActionResult> Get(int pageIndex=0, int pageSize=20, int indexFrom = 0, int itemCount=0)
         {
-            var customers = await this.service.GetAsync(pageIndex, pageSize);
+            var result = await this.service.GetPagedListAsync(
+                x => new CustomerViewModel { NickName = x.NickName, FamilyName = x.FamilyName, GivenName = x.GivenName, Email = x.Email },
+                pageIndex:pageIndex, pageSize:pageSize, indexFrom:indexFrom, itemCount:itemCount);
 
-            return Ok(customers);
+            return Ok(result);
         }
 
         // GET api/<controller>/5
@@ -47,33 +49,25 @@ namespace MPDex.Web.Frontend.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody]CustomerCreateModel vm)
         {
-            vm = A.New<CustomerCreateModel>();
-
             if (!ModelState.IsValid) 
                 return BadRequest(ModelState);
 
-            var customer = Mapper.Map<Customer>(vm);
-            var id = await this.service.AddAsync(customer);
+            var customer = await this.service.AddAsync(vm);
             
-            return Ok(id);
+            return Ok(customer);
         }
 
         // PUT api/<controller>/5
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> Put(Guid id, [FromBody]CustomerCreateModel vm)
+        public async Task<IActionResult> Put(Guid id, [FromBody]CustomerUpdateModel vm)
         {
             if (id == Guid.Empty)
                 return BadRequest(id);
-
-            vm = A.New<CustomerCreateModel>();
-
+            
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var customer = Mapper.Map<Customer>(vm);
-            customer.Id = id;
-
-            var isSuccess = await this.service.UpdateAsync(customer);
+            var isSuccess = await this.service.UpdateAsync(vm, id);
 
             return Ok(isSuccess);
         }

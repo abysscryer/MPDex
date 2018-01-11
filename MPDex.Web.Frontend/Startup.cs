@@ -10,6 +10,8 @@ using Microsoft.Extensions.Logging.Console;
 using MPDex.Data;
 using MPDex.Repository;
 using MPDex.Services;
+using Newtonsoft.Json.Serialization;
+using System.Reflection;
 
 namespace MPDex.Web.Frontend
 {
@@ -25,24 +27,38 @@ namespace MPDex.Web.Frontend
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // inject dbcontext
             services.AddDbContext<MPDexContext>(options => options
                 .UseLoggerFactory(MyLoggerFactory)
                 .UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), 
                     b => b.MigrationsAssembly("MPDex.Data")));
 
+            // inject identity
             services.AddIdentity<Operator, OperatorRole>()
                 .AddEntityFrameworkStores<MPDexContext>()
                 .AddDefaultTokenProviders();
 
+            // inject unit of work
             services.AddUnitOfWork<MPDexContext>();
 
+            // inject coin service
             services.AddScoped<ICoinService, CoinService>();
+
+            // inject customer service
             services.AddScoped<ICustomerService, CustomerService>();
 
+            services.AddScoped<IBookService, BookService>();
+
+            // inject email service
             services.AddTransient<IEmailSender, EmailSender>();
 
-            services.AddMvc();
+            // inject mvc with json camel case resolver
+            services.AddMvc()
+                .AddJsonOptions(options => {
+                    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                });
 
+            // inject auto mapper
             services.AddAutoMapper();
         }
 
@@ -73,7 +89,11 @@ namespace MPDex.Web.Frontend
         }
 
         public static readonly LoggerFactory MyLoggerFactory
-            = new LoggerFactory(new[] { new ConsoleLoggerProvider((_, __) => true, true) });
+            = new LoggerFactory(new[] 
+            { new ConsoleLoggerProvider((category, level) => 
+                category == DbLoggerCategory.Database.Command.Name
+                    && level == LogLevel.Information, true)
+            });
 
     }
 }

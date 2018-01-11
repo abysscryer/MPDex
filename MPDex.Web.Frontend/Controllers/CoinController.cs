@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using GenFu;
 using Microsoft.AspNetCore.Mvc;
 using MPDex.Models.Domain;
 using MPDex.Models.ViewModels;
@@ -21,11 +20,13 @@ namespace MPDex.Web.Frontend.Controllers
 
         // GET: api/<controller>
         [HttpGet]
-        public async Task<IActionResult> Get(int pageIndex = 0, int pageSize = 20)
+        public async Task<IActionResult> Get(int pageIndex = 0, int pageSize = 20, int indexFrom=0, int itemCount = 0)
         {
-            var coins = await this.service.GetAsync(pageIndex, pageSize);
- 
-            return Ok(coins);
+            var result = await this.service.GetPagedListAsync(
+                x => new CoinViewModel { Id =  x.Id, Name = x.Name, OnCreated = x.OnCreated },
+                pageIndex:pageIndex, pageSize:pageSize, indexFrom:indexFrom, itemCount:itemCount);
+
+            return Ok(result);
         }
 
         // GET api/<controller>/5
@@ -45,37 +46,29 @@ namespace MPDex.Web.Frontend.Controllers
 
         // POST api/<controller>
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody]CoinCreateModel vm)
+        public async Task<IActionResult> Post([FromBody]CoinCreateModel createModel)
         {
-            //vm = A.New<CoinCreateModel>();
-
-             if (!ModelState.IsValid)
+            if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var coin = Mapper.Map<Coin>(vm);
-            var id = await this.service.AddAsync(coin); 
+            var viewModel = await this.service.AddAsync(createModel); 
             
-            return Ok(id);
+            return Ok(viewModel);
         }
 
         // PUT api/<controller>/5
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> Put(short id, [FromBody]CoinCreateModel vm)
+        public async Task<IActionResult> Put(short id, [FromBody]CoinUpdateModel createModel)
         {
             if (id == 0)
                 return BadRequest(id);
 
-            vm = A.New<CoinCreateModel>();
-
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var coin = Mapper.Map<Coin>(vm);
-            coin.Id = id;
-
-            var isSuccess = await this.service.UpdateAsync(coin);
+            var viewModel = await this.service.UpdateAsync(createModel, id);
             
-            return Ok(isSuccess);
+            return Ok(viewModel);
         }
 
         // DELETE api/<controller>/5

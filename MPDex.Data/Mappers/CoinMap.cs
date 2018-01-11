@@ -27,7 +27,8 @@ namespace MPDex.Data.Mappers
                     .IsRequired()
                     .HasMaxLength(16);
                 n.Property(c => c.OnCreated)
-                    .HasDefaultValueSql("getdate()");
+                    .HasDefaultValueSql("getdate()")
+                    .Metadata.IsReadOnlyAfterSave = true;
             });
         }
     }
