@@ -5,6 +5,7 @@ using MPDex.Models.Domain;
 using MPDex.Models.ViewModels;
 using MPDex.Services;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MPDex.Web.Frontend.Controllers
@@ -23,8 +24,11 @@ namespace MPDex.Web.Frontend.Controllers
         [HttpGet]
         public async Task<IActionResult> Get(int pageIndex=0, int pageSize=20, int indexFrom = 0, int itemCount=0)
         {
-            var result = await this.service.GetPagedListAsync(
-                x => new CustomerViewModel { NickName = x.NickName, FamilyName = x.FamilyName, GivenName = x.GivenName, Email = x.Email },
+            var result = await this.service.GetPagedListAsync(x => new CustomerViewModel {
+                    NickName = x.NickName,
+                    FamilyName = x.FamilyName,
+                    GivenName = x.GivenName,
+                    Email = x.Email },
                 pageIndex:pageIndex, pageSize:pageSize, indexFrom:indexFrom, itemCount:itemCount);
 
             return Ok(result);
@@ -44,7 +48,7 @@ namespace MPDex.Web.Frontend.Controllers
 
             return Ok(customer);
         }
-
+        
         // POST api/<controller>
         [HttpPost]
         public async Task<IActionResult> Post([FromBody]CustomerCreateModel vm)

@@ -1,11 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MPDex.Models.Domain;
-using System.Threading.Tasks;
 using System.Linq;
-using MPDex.Models.ViewModels;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System;
+using System.Threading.Tasks;
 
 namespace MPDex.Repository
 {

@@ -8,7 +8,7 @@ namespace MPDex.Models.Domain
     /// </summary>
     public class Book : Auditable<Guid>
     {
-        public OrderType BookType { get; set; }
+        public OrderType OrderType { get; set; }
 
         public decimal Price { get; set; }
 

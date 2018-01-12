@@ -22,11 +22,11 @@ namespace MPDex.Web.Frontend.Controllers
         [HttpGet]
         public async Task<IActionResult> Get(int pageIndex = 0, int pageSize = 20, int indexFrom=0, int itemCount = 0)
         {
-            var result = await this.service.GetPagedListAsync(
+            var page = await this.service.GetPagedListAsync(
                 x => new CoinViewModel { Id =  x.Id, Name = x.Name, OnCreated = x.OnCreated },
                 pageIndex:pageIndex, pageSize:pageSize, indexFrom:indexFrom, itemCount:itemCount);
 
-            return Ok(result);
+            return Ok(page);
         }
 
         // GET api/<controller>/5
@@ -46,19 +46,19 @@ namespace MPDex.Web.Frontend.Controllers
 
         // POST api/<controller>
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody]CoinCreateModel createModel)
+        public async Task<IActionResult> Post([FromBody]CoinCreateModel cm)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var viewModel = await this.service.AddAsync(createModel); 
+            var vm = await this.service.AddAsync(cm); 
             
-            return Ok(viewModel);
+            return Ok(vm);
         }
 
         // PUT api/<controller>/5
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> Put(short id, [FromBody]CoinUpdateModel createModel)
+        public async Task<IActionResult> Put(short id, [FromBody]CoinUpdateModel um)
         {
             if (id == 0)
                 return BadRequest(id);
@@ -66,9 +66,9 @@ namespace MPDex.Web.Frontend.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var viewModel = await this.service.UpdateAsync(createModel, id);
+            var vm = await this.service.UpdateAsync(um, id);
             
-            return Ok(viewModel);
+            return Ok(vm);
         }
 
         // DELETE api/<controller>/5
@@ -78,8 +78,8 @@ namespace MPDex.Web.Frontend.Controllers
             if (id == 0)
                 return BadRequest(id);
 
-            var isSuccess = await this.service.RemoveAsync(id);
-            return Ok(isSuccess); 
+            var ok = await this.service.RemoveAsync(id);
+            return Ok(ok); 
         }
     }
 }

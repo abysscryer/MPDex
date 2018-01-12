@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.Logging;
 using MPDex.Models.Base;
@@ -36,58 +37,78 @@ namespace MPDex.Services
             Func<IQueryable<EM>, IIncludableQueryable<EM, object>> include = null,
             int pageIndex = 0, int pageSize = 20, int indexFrom = 0, int itemCount = 0, bool disableTracking = true)
         {
-            return await this.repository.Get<VM>(selector:selector, predicate: predicate, orderBy: orderBy, include: include)
+            return await this.repository.Get(selector:selector, predicate: predicate, orderBy: orderBy, include: include)
                 .ToPagedListAsync(pageIndex, pageSize, indexFrom, itemCount);
         }
-        
+
+        public async Task<IEnumerable<VM>> Get(Expression<Func<EM, VM>> selector,
+            Expression<Func<EM, bool>> predicate = null,
+            Func<IQueryable<EM>, IOrderedQueryable<EM>> orderBy = null,
+            Func<IQueryable<EM>, IIncludableQueryable<EM, object>> include = null
+            , bool disableTracking = true)
+        {
+            return await this.repository.Get(selector: selector, predicate: predicate, orderBy: orderBy, include: include)
+                .ToListAsync();
+        }
+
+        public async Task<VM> GetSingle(Expression<Func<EM, VM>> selector,
+            Expression<Func<EM, bool>> predicate = null,
+            Func<IQueryable<EM>, IOrderedQueryable<EM>> orderBy = null,
+            Func<IQueryable<EM>, IIncludableQueryable<EM, object>> include = null
+            , bool disableTracking = true)
+        {
+            return await this.repository.Get(selector: selector, predicate: predicate, orderBy: orderBy, include: include)
+                .SingleOrDefaultAsync();
+        }
+
         public async Task<VM> FindAsync(params object[] keys)
         {
-            VM vModel = default(VM);
-            EM entity = default(EM);
+            VM vm = default(VM);
+            EM em = default(EM);
 
             try
             {
-                entity = await this.repository.FindAsync(keys);
-                if (entity != null)
-                    vModel = Mapper.Map<VM>(entity);
+                em = await this.repository.FindAsync(keys);
+                if (em != null)
+                    vm = Mapper.Map<VM>(em);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, ex.Message, keys, entity, vModel);
+                logger.LogError(ex, ex.Message, keys, em, vm);
                 throw;
             }
-            return vModel;
+            return vm;
         }
         
-        public virtual async Task<VM> AddAsync(CM cModel)
+        public virtual async Task<VM> AddAsync(CM cm)
         {
-            EM entity = default(EM);
-            VM vModel = default(VM);
-            var isSuccess = false;
+            EM em = default(EM);
+            VM vm = default(VM);
+            var ok = false;
             
             try
             {
-                entity = Mapper.Map<EM>(cModel);
-                isSuccess = await this.AddAsync(entity);
+                em = Mapper.Map<EM>(cm);
+                ok = await this.AddAsync(em);
 
-                if (isSuccess)
-                    vModel = Mapper.Map<VM>(entity);
+                if (ok)
+                    vm = Mapper.Map<VM>(em);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, ex.Message, cModel, entity, vModel);
+                logger.LogError(ex, ex.Message, cm, em, vm);
                 throw;
             }
 
-            return vModel;
+            return vm;
         }
-        
-        public async Task<VM> UpdateAsync(UM cModel, params object[] keys)
+
+        public async Task<VM> UpdateAsync(UM cm, params object[] keys)
         {
-            var isSuccess = false;
+            var ok = false;
             EM target = default(EM);
             EM source = default(EM);
-            VM viewModel = default(VM);
+            VM vm = default(VM);
 
             try
             {
@@ -95,64 +116,64 @@ namespace MPDex.Services
 
                 if (target != null)
                 {
-                    source = Mapper.Map(cModel, target);
-                    isSuccess = await this.UpdateAsync(source);
+                    source = Mapper.Map(cm, target);
+                    ok = await this.UpdateAsync(source);
                 }
 
-                if (isSuccess)
-                    viewModel = Mapper.Map<VM>(source);
+                if (ok)
+                    vm = Mapper.Map<VM>(source);
 
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, ex.Message, cModel, target, source, isSuccess);
+                logger.LogError(ex, ex.Message, cm, target, source, ok);
                 throw;
             }
 
-            return viewModel;
+            return vm;
         }
         
-        public async Task<bool> RemoveAsync(params object[] keyValues)
+        public async Task<bool> RemoveAsync(params object[] keys)
         {
-            var isSuccess = false;
-            EM entity = null;
+            var ok = false;
+            EM em = null;
             try
             {
-                entity = await this.repository.FindAsync(keyValues);
-                if (entity != null)
-                    isSuccess = await this.RemoveAsync(entity);
+                em = await this.repository.FindAsync(keys);
+                if (em != null)
+                    ok = await this.RemoveAsync(em);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, ex.Message, entity, isSuccess);
+                logger.LogError(ex, ex.Message, em, ok);
                 throw;
             }
 
-            return isSuccess;
+            return ok;
         }
 
-        #region private methods
+        #region protected methods
         
-        private async Task<bool> AddAsync(EM entity)
+        protected async Task<bool> AddAsync(EM em)
         {
-            this.repository.Add(entity);
+            this.repository.Add(em);
             var effected = await this.unitOfWork.SaveChangesAsync();
 
             return effected == 1;
         }
 
-        private async Task<bool> UpdateAsync(EM entity)
+        protected async Task<bool> UpdateAsync(EM em)
         {
 
-            this.repository.Update(entity);
+            this.repository.Update(em);
             var effected = await this.unitOfWork.SaveChangesAsync();
 
             return effected == 1;
         }
 
-        private async Task<bool> RemoveAsync(EM entity)
+        protected async Task<bool> RemoveAsync(EM em)
         {
-            this.repository.Remove(entity);
+            this.repository.Remove(em);
             var effected = await this.unitOfWork.SaveChangesAsync();
 
             return effected == 1;

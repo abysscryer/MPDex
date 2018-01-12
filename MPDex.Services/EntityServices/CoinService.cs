@@ -1,13 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
-using MPDex.Repository;
 using MPDex.Models.Domain;
+using MPDex.Models.ViewModels;
+using MPDex.Repository;
 using System;
 using System.Threading.Tasks;
-using MPDex.Models.ViewModels;
-using AutoMapper;
-using System.Linq.Expressions;
-using System.Linq;
-using Microsoft.EntityFrameworkCore.Query;
 
 namespace MPDex.Services
 {
@@ -16,7 +12,8 @@ namespace MPDex.Services
         private readonly ICoinRepository repository;
         private readonly ILogger<CoinService> logger;
 
-        public CoinService(IUnitOfWork unitOfWork, ILogger<CoinService> logger, 
+        public CoinService(IUnitOfWork unitOfWork, 
+                           ILogger<CoinService> logger, 
                            ILogger<Service<Coin, CoinCreateModel, CoinUpdateModel, CoinViewModel>> genericLogger)
             : base(unitOfWork, genericLogger)
         {

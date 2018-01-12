@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using MPDex.Models.ViewModels;
 using MPDex.Services;
+using System.Threading.Tasks;
 
 namespace MPDex.Web.Frontend.Controllers
 {
@@ -24,36 +20,70 @@ namespace MPDex.Web.Frontend.Controllers
         [HttpGet]
         public async Task<IActionResult> Get(int pageIndex = 0, int pageSize = 20, int indexFrom = 0, int itemCount = 0)
         {
-            var result = await this.service.GetPagedListAsync(
-                x => new BookViewModel { BookType = x.BookType, Price = x.Price, Amount = x.Amount, Stock = x.Stock, CoinName = x.Coin.Name, NickName = x.Customer.NickName },
+            var page = await this.service.GetPagedListAsync(
+                x => new BookViewModel {
+                    OrderType = x.OrderType,
+                    Price = x.Price,
+                    Amount = x.Amount,
+                    Stock = x.Stock,
+                    CoinName = x.Coin.Name,
+                    NickName = x.Customer.NickName },
                 pageIndex: pageIndex, pageSize: pageSize, indexFrom: indexFrom, itemCount: itemCount);
 
-            return Ok(result);
+            return Ok(page);
         }
 
         // GET: api/Book/5
-        [HttpGet("{id}", Name = "Get")]
-        public string Get(int id)
+        [HttpGet("{id:long}", Name = "Get")]
+        public async Task<IActionResult> Get(long id)
         {
-            return "value";
+            if (id == 0)
+                return BadRequest(id);
+
+            var coin = await this.service.FindAsync(id);
+
+            if (coin == null)
+                return NotFound(id);
+
+            return Ok(coin);
         }
         
         // POST: api/Book
         [HttpPost]
-        public void Post([FromBody]string value)
+        public async Task<IActionResult> Post([FromBody]BookCreateModel cm)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var vm = await this.service.AddAsync(cm);
+
+            return Ok(vm);
         }
         
         // PUT: api/Book/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
+        [HttpPut("{id:long}")]
+        public async Task<IActionResult> Put(long id, [FromBody]BookUpdateModel um)
         {
+            if (id == 0)
+                return BadRequest(id);
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var vm = await this.service.UpdateAsync(um, id);
+
+            return Ok(vm);
         }
         
         // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete("{id:long}")]
+        public async Task<IActionResult> Delete(long id)
         {
+            if (id == 0)
+                return BadRequest(id);
+
+            var ok = await this.service.RemoveAsync(id);
+            return Ok(ok);
         }
     }
 }

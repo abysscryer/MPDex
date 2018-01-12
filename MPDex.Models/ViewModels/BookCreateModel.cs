@@ -5,13 +5,17 @@ namespace MPDex.Models.ViewModels
 {
     public class BookCreateModel
     {
-        public OrderType BookType { get; set; }
+        public Guid Id { get; set; }
+
+        public OrderType OrderType { get; set; }
 
         public decimal Price { get; set; }
 
         public decimal Amount { get; set; }
 
         public decimal Stock { get; set; }
+
+        public string IPAddress { get; set; }
 
         public Guid CustomerId { get; set; }
 

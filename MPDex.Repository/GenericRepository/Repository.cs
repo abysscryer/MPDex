@@ -14,7 +14,6 @@ namespace MPDex.Repository
     public class Repository<EM> : IRepository<EM>
         where EM : Entity
     {
-
         protected readonly DbContext dbContext;
         protected readonly DbSet<EM> dbSet;
         
@@ -30,7 +29,12 @@ namespace MPDex.Repository
 
         public DbSet<EM> Entitis
         {
-            get { return dbSet; }
+            get { return this.dbSet; }
+        }
+
+        public DbContext Context
+        {
+            get { return this.dbContext; }
         }
 
         /// <summary>
@@ -77,12 +81,7 @@ namespace MPDex.Repository
 
             return query.Select(selector);
         }
-
-        public IEnumerable<EM> GetBy(Expression<Func<EM, bool>> predicate)
-        {
-            return this.dbSet.Where(predicate).AsEnumerable();
-        }
-
+        
         public async Task<EM> FindAsync(params object[] keys)
         {
             return await this.dbSet.FindAsync(keys);
@@ -101,6 +100,23 @@ namespace MPDex.Repository
         public void Remove(EM em)
         {
             this.dbSet.Remove(em);
+        }
+
+        /// <summary>
+        /// Gets the count based on a predicate.
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        public int Count(Expression<Func<EM, bool>> predicate = null)
+        {
+            if (predicate == null)
+            {
+                return this.dbSet.Count();
+            }
+            else
+            {
+                return this.dbSet.Count(predicate);
+            }
         }
     }
 }
