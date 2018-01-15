@@ -10,25 +10,40 @@ namespace MPDex.Data.Mappers
     {
         public CoinMap(ModelBuilder builder)
         {
-            // build primary key
-            builder.Entity<Coin>()
-                .HasKey(c => c.Id);
-            
-            // build forign key constrains
-            builder.Entity<Coin>()
-                .HasMany(c => c.Books)
-                .WithOne(b => b.Coin);
-
-            //build fields
             builder.Entity<Coin>(n => {
+                
+                n.HasKey(c => c.Id);
+                
+                n.HasMany(c => c.Books)
+                 .WithOne(b => b.Coin)
+                 .IsRequired();
+
+                n.HasMany(c => c.Trades)
+                 .WithOne(t => t.Coin)
+                 .IsRequired();
+
+                n.HasMany(c => c.Orders)
+                 .WithOne(o => o.Coin)
+                 .IsRequired();
+
+                n.HasMany(c => c.Balances)
+                 .WithOne(b => b.Coin)
+                 .IsRequired();
+
+                n.HasMany(c => c.Statements)
+                 .WithOne(s => s.Coin)
+                 .IsRequired();
+
                 n.Property(c => c.Id)
                     .ValueGeneratedNever();
+
                 n.Property(c => c.Name)
                     .IsRequired()
+                    .IsUnicode(false)
                     .HasMaxLength(16);
+
                 n.Property(c => c.OnCreated)
-                    .HasDefaultValueSql("getdate()")
-                    .Metadata.IsReadOnlyAfterSave = true;
+                    .HasDefaultValueSql("getdate()");
             });
         }
     }

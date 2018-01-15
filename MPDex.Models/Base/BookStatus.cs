@@ -1,9 +1,13 @@
 ﻿namespace MPDex.Models.Base
 {
     /// <summary>
-    /// type start with 1
+    /// status start with 1
     /// </summary>
     public enum BookStatus : byte {
-        Placed = 0, Traded, Canceled
+        Pending = 0, // just created
+        Placed, // balance updated
+        Completed, // book matched
+        Canceled, // book canceled
+        Expired // book expired
     }
 }

@@ -22,11 +22,11 @@ namespace MPDex.Services
             this.logger = logger;
         }
 
-        public override async Task<CustomerViewModel> AddAsync(CustomerCreateModel cModel)
+        public override async Task<CustomerViewModel> AddAsync(CustomerCreateModel cm)
         {
-            cModel.Id = Guid.NewGuid();
+            cm.Id = Guid.NewGuid();
 
-            return await base.AddAsync(cModel);
+            return await base.AddAsync(cm);
         }
     }
 }

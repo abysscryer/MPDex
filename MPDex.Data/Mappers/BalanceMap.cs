@@ -10,22 +10,31 @@ namespace MPDex.Data.Mappers
     {
         public BalanceMap(ModelBuilder builder)
         {
-            builder.Entity<Balance>()
-                .HasKey(t => new { t.CustomerId, t.CoinId });
-
-            builder.Entity<Balance>()
-                .HasOne(b => b.Customer)
-                .WithMany(c => c.Balances)
-                .HasForeignKey(b => b.CustomerId);
-
-            builder.Entity<Balance>()
-                .HasOne(b => b.Coin)
-                .WithMany(c => c.Balances)
-                .HasForeignKey(b => b.CoinId);
-
             builder.Entity<Balance>(n =>
             {
-                n.Property(b => b.Amount).IsRequired().HasColumnType("decimal(20, 8)");
+                n.HasKey(t => new { t.CustomerId, t.CoinId });
+
+                n.HasOne(b => b.Customer)
+                 .WithMany(c => c.Balances)
+                 .IsRequired()
+                 .OnDelete(DeleteBehavior.Restrict);
+
+                n.HasOne(b => b.Coin)
+                 .WithMany(c => c.Balances)
+                 .IsRequired()
+                 .OnDelete(DeleteBehavior.Restrict);
+
+                n.HasMany(b => b.Statements)
+                 .WithOne(s => s.Balance)
+                 .IsRequired();
+
+                n.Property(b => b.CurrentAmount)
+                 .IsRequired()
+                 .HasColumnType("decimal(20, 8)");
+
+                n.Property(b => b.BookAmount)
+                 .IsRequired()
+                 .HasColumnType("decimal(20, 8)");
             });
 
 

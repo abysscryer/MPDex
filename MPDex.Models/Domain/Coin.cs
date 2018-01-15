@@ -13,6 +13,9 @@ namespace MPDex.Models.Domain
 
         public virtual ICollection<Balance> Balances { get; set; }
         public virtual ICollection<Book> Books { get; set; }
-
+        public virtual ICollection<Trade> Trades { get; set; }
+        public virtual ICollection<Order> Orders { get; set; }
+        public virtual ICollection<Fee> Fees { get; set; }
+        public virtual ICollection<Statement> Statements { get; set; }
     }
 }

@@ -6,6 +6,6 @@ namespace MPDex.Services
 {
     public interface ICoinService : IService<Coin, CoinCreateModel, CoinUpdateModel, CoinViewModel>
     {
-        Task<short> GetMaxAsync();
+        //Task<short> GetMaxAsync();
     }
 }

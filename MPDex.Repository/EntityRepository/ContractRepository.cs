@@ -3,9 +3,9 @@ using MPDex.Models.Domain;
 
 namespace MPDex.Repository
 {
-    public class CustomerRepository : Repository<Customer>, ICustomerRepository
+    public class ContractRepository : Repository<Contract>, IContractRepository
     {
-        public CustomerRepository(DbContext dbContext)
+        public ContractRepository(DbContext dbContext)
             : base(dbContext)
         { }
     }

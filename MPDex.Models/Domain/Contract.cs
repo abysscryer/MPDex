@@ -8,12 +8,13 @@ namespace MPDex.Models.Domain
     /// <summary>
     /// 계약
     /// </summary>
-    public class Contract : Entity<long>
+    public class Contract : Entity<Guid>
     {
         public decimal Price { get; set; }
         public decimal Amount { get; set; }
 
-        public long TradeId { get; set; }
         public virtual Trade Trade { get; set; }
+
+        public virtual ICollection<Order> Orders { get; set; }
     }
 }

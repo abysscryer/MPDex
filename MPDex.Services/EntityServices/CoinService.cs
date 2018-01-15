@@ -21,29 +21,31 @@ namespace MPDex.Services
             this.logger = logger;
         }
         
-        public async Task<short> GetMaxAsync()
+        //public async Task<short> GetMaxAsync()
+        //{
+        //    short max;
+
+        //    try
+        //    {
+        //        max = await this.repository.MaxAsync();
+        //    }
+        //    catch (Exception ex )
+        //    {
+        //        logger.LogError(ex, ex.Message);
+        //        throw;
+        //    }
+
+        //    return max;
+        //}
+
+        public override async Task<CoinViewModel> AddAsync(CoinCreateModel cm)
         {
-            short max;
+            var max = await base.MaxAsync(x => new CoinViewModel { Id = x.Id });
+            //var id = await this.GetMaxAsync();
+            //cm.Id = ++id;
+            var id = max.Id;
 
-            try
-            {
-                max = await this.repository.MaxAsync();
-            }
-            catch (Exception ex )
-            {
-                logger.LogError(ex, ex.Message);
-                throw;
-            }
-
-            return max;
-        }
-
-        public override async Task<CoinViewModel> AddAsync(CoinCreateModel cModel)
-        {
-            var id = await this.GetMaxAsync();
-            cModel.Id = (short)++id;
-
-            return await base.AddAsync(cModel);
+            return await base.AddAsync(cm);
         }
     }
 }

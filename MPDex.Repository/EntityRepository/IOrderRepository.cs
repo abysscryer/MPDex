@@ -2,6 +2,6 @@
 
 namespace MPDex.Repository
 {
-    public interface ICustomerRepository : IRepository<Customer>
+    public interface IOrderRepository : IRepository<Order>
     { }
 }

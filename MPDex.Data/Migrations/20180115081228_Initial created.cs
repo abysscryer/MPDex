@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace MPDex.Data.Migrations
 {
-    public partial class InitialCreated : Migration
+    public partial class Initialcreated : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -53,8 +53,8 @@ namespace MPDex.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<short>(nullable: false),
-                    Name = table.Column<string>(maxLength: 16, nullable: false),
-                    OnCreated = table.Column<DateTime>(nullable: false)
+                    Name = table.Column<string>(unicode: false, maxLength: 16, nullable: false),
+                    OnCreated = table.Column<DateTime>(nullable: false, defaultValueSql: "getdate()")
                 },
                 constraints: table =>
                 {
@@ -70,7 +70,7 @@ namespace MPDex.Data.Migrations
                     Email = table.Column<string>(unicode: false, maxLength: 36, nullable: false),
                     FamilyName = table.Column<string>(maxLength: 16, nullable: false),
                     GivenName = table.Column<string>(maxLength: 16, nullable: false),
-                    NiceName = table.Column<string>(maxLength: 16, nullable: false),
+                    NickName = table.Column<string>(maxLength: 16, nullable: false),
                     OnCreated = table.Column<DateTime>(nullable: false, defaultValueSql: "getdate()")
                 },
                 constraints: table =>
@@ -185,12 +185,55 @@ namespace MPDex.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Fee",
+                columns: table => new
+                {
+                    Id = table.Column<short>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    CoinId = table.Column<short>(nullable: false),
+                    OnCreated = table.Column<DateTime>(nullable: false, defaultValueSql: "getdate()"),
+                    Percent = table.Column<decimal>(type: "decimal(3, 3)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Fee", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Fee_Coin_CoinId",
+                        column: x => x.CoinId,
+                        principalTable: "Coin",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Trade",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false, defaultValueSql: "newid()"),
+                    Amount = table.Column<decimal>(type: "decimal(20, 8)", nullable: false),
+                    CoinId = table.Column<short>(nullable: false),
+                    OnCreated = table.Column<DateTime>(nullable: false, defaultValueSql: "getdate()"),
+                    Price = table.Column<decimal>(type: "decimal(20, 8)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Trade", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Trade_Coin_CoinId",
+                        column: x => x.CoinId,
+                        principalTable: "Coin",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Balance",
                 columns: table => new
                 {
                     CustomerId = table.Column<Guid>(nullable: false),
                     CoinId = table.Column<short>(nullable: false),
-                    Amount = table.Column<decimal>(type: "decimal(20, 8)", nullable: false)
+                    BookAmount = table.Column<decimal>(type: "decimal(20, 8)", nullable: false),
+                    CurrentAmount = table.Column<decimal>(type: "decimal(20, 8)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -200,27 +243,28 @@ namespace MPDex.Data.Migrations
                         column: x => x.CoinId,
                         principalTable: "Coin",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Balance_Customer_CustomerId",
                         column: x => x.CustomerId,
                         principalTable: "Customer",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Book",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false),
+                    Id = table.Column<Guid>(nullable: false, defaultValueSql: "newid()"),
                     Amount = table.Column<decimal>(type: "decimal(20, 8)", nullable: false),
-                    BookType = table.Column<byte>(nullable: false),
+                    BookStatus = table.Column<byte>(nullable: false),
                     CoinId = table.Column<short>(nullable: false),
                     CustomerId = table.Column<Guid>(nullable: false),
                     IPAddress = table.Column<string>(unicode: false, maxLength: 36, nullable: false),
                     OnCreated = table.Column<DateTime>(nullable: false, defaultValueSql: "getdate()"),
                     OnUpdated = table.Column<DateTime>(nullable: true),
+                    OrderType = table.Column<byte>(nullable: false),
                     Price = table.Column<decimal>(type: "decimal(20, 8)", nullable: false),
                     RowVersion = table.Column<byte[]>(rowVersion: true, nullable: false),
                     Stock = table.Column<decimal>(type: "decimal(20, 8)", nullable: false)
@@ -233,13 +277,127 @@ namespace MPDex.Data.Migrations
                         column: x => x.CoinId,
                         principalTable: "Coin",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Book_Customer_CustomerId",
                         column: x => x.CustomerId,
                         principalTable: "Customer",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Contract",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false, defaultValueSql: "newid()"),
+                    Amount = table.Column<decimal>(type: "decimal(20, 8)", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(20, 8)", nullable: false),
+                    TradeId = table.Column<Guid>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Contract", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Contract_Trade_TradeId",
+                        column: x => x.TradeId,
+                        principalTable: "Trade",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Order",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(20, 8)", nullable: false),
+                    CoinId = table.Column<short>(nullable: false),
+                    ContractId = table.Column<Guid>(nullable: false),
+                    CustomerId = table.Column<Guid>(nullable: false),
+                    OnCreated = table.Column<DateTime>(nullable: false, defaultValueSql: "getdate()"),
+                    OrderType = table.Column<byte>(nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(20, 8)", nullable: false),
+                    Stock = table.Column<decimal>(type: "decimal(20, 8)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Order", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Order_Coin_CoinId",
+                        column: x => x.CoinId,
+                        principalTable: "Coin",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Order_Contract_ContractId",
+                        column: x => x.ContractId,
+                        principalTable: "Contract",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Order_Customer_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Customer",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Statement",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    AfterAmount = table.Column<decimal>(type: "decimal(20, 8)", nullable: false),
+                    BalanceAmount = table.Column<decimal>(type: "decimal(20, 8)", nullable: false),
+                    BalanceCoinId = table.Column<short>(nullable: false),
+                    BalanceCustomerId = table.Column<Guid>(nullable: false),
+                    BeforeAmount = table.Column<decimal>(type: "decimal(20, 8)", nullable: false),
+                    CoinId = table.Column<short>(nullable: false),
+                    CustomerId = table.Column<Guid>(nullable: false),
+                    FeeAmount = table.Column<decimal>(type: "decimal(20, 8)", nullable: false),
+                    FeeId = table.Column<short>(nullable: true),
+                    IPAddress = table.Column<string>(unicode: false, maxLength: 36, nullable: false),
+                    OnCreated = table.Column<DateTime>(nullable: false, defaultValueSql: "getdate()"),
+                    OnUpdated = table.Column<DateTime>(nullable: true),
+                    OrderId = table.Column<Guid>(nullable: false),
+                    RowVersion = table.Column<byte[]>(rowVersion: true, nullable: false),
+                    StatementType = table.Column<byte>(nullable: false),
+                    VerifyKey = table.Column<string>(unicode: false, maxLength: 64, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Statement", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Statement_Coin_CoinId",
+                        column: x => x.CoinId,
+                        principalTable: "Coin",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Statement_Customer_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Customer",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Statement_Fee_FeeId",
+                        column: x => x.FeeId,
+                        principalTable: "Fee",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Statement_Order_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Order",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Statement_Balance_BalanceCustomerId_BalanceCoinId",
+                        columns: x => new { x.BalanceCustomerId, x.BalanceCoinId },
+                        principalTable: "Balance",
+                        principalColumns: new[] { "CustomerId", "CoinId" },
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
@@ -295,6 +453,62 @@ namespace MPDex.Data.Migrations
                 name: "IX_Book_CustomerId",
                 table: "Book",
                 column: "CustomerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Contract_TradeId",
+                table: "Contract",
+                column: "TradeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Fee_CoinId",
+                table: "Fee",
+                column: "CoinId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Order_CoinId",
+                table: "Order",
+                column: "CoinId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Order_ContractId",
+                table: "Order",
+                column: "ContractId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Order_CustomerId",
+                table: "Order",
+                column: "CustomerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Statement_CoinId",
+                table: "Statement",
+                column: "CoinId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Statement_CustomerId",
+                table: "Statement",
+                column: "CustomerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Statement_FeeId",
+                table: "Statement",
+                column: "FeeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Statement_OrderId",
+                table: "Statement",
+                column: "OrderId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Statement_BalanceCustomerId_BalanceCoinId",
+                table: "Statement",
+                columns: new[] { "BalanceCustomerId", "BalanceCoinId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Trade_CoinId",
+                table: "Trade",
+                column: "CoinId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -315,10 +529,10 @@ namespace MPDex.Data.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Balance");
+                name: "Book");
 
             migrationBuilder.DropTable(
-                name: "Book");
+                name: "Statement");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -327,10 +541,25 @@ namespace MPDex.Data.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "Coin");
+                name: "Fee");
+
+            migrationBuilder.DropTable(
+                name: "Order");
+
+            migrationBuilder.DropTable(
+                name: "Balance");
+
+            migrationBuilder.DropTable(
+                name: "Contract");
 
             migrationBuilder.DropTable(
                 name: "Customer");
+
+            migrationBuilder.DropTable(
+                name: "Trade");
+
+            migrationBuilder.DropTable(
+                name: "Coin");
         }
     }
 }

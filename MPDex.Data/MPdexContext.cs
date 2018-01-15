@@ -17,11 +17,11 @@ namespace MPDex.Data
         public MPDexContext(DbContextOptions<MPDexContext> options) 
             : base(options)
         { }
-
+        
         /// <summary>
-        /// 고객
+        /// 잔고
         /// </summary>
-        public DbSet<Customer> Customer { get; set; }
+        public DbSet<Balance> Balance { get; set; }
 
         /// <summary>
         /// 예약
@@ -34,23 +34,52 @@ namespace MPDex.Data
         public DbSet<Coin> Coin { get; set; }
 
         /// <summary>
-        /// 잔고
+        /// 계약
         /// </summary>
-        public DbSet<Balance> Balance { get; set; }
+        public DbSet<Contract> Contract { get; set; }
 
+        /// <summary>
+        /// 고객
+        /// </summary>
+        public DbSet<Customer> Customer { get; set; }
+
+        /// <summary>
+        /// 수수료
+        /// </summary>
+        public DbSet<Fee> Fee { get; set; }
+
+        /// <summary>
+        /// 주문
+        /// </summary>
+        public DbSet<Order> Order { get; set; }
+
+        /// <summary>
+        /// 내역
+        /// </summary>
+        public DbSet<Statement> Statement { get; set; }
+
+        /// <summary>
+        /// 거래
+        /// </summary>
+        public DbSet<Trade> Trade { get; set; }
 
         /// <summary>
         /// model createing event callback
         /// </summary>
-        /// <param name="modelBuilder"></param>
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        /// <param name="builder"></param>
+        protected override void OnModelCreating(ModelBuilder builder)
         {
-            base.OnModelCreating(modelBuilder);
-
-            new CustomerMap(modelBuilder);
-            new BookMap(modelBuilder);
-            new CoinMap(modelBuilder);
-            new BalanceMap(modelBuilder);
+            base.OnModelCreating(builder);
+            
+            new BalanceMap(builder);
+            new BookMap(builder);
+            new CoinMap(builder);
+            new ContractMap(builder);
+            new CustomerMap(builder);
+            new FeeMap(builder);
+            new OrderMap(builder);
+            new StatementMap(builder);
+            new TradeMap(builder);
         }
     }
 

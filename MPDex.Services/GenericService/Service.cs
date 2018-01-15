@@ -79,7 +79,12 @@ namespace MPDex.Services
             }
             return vm;
         }
-        
+
+        public async Task<VM> MaxAsync(Expression<Func<EM, VM>> selector)
+        {
+            return await this.repository.Get(selector).MaxAsync();
+        }
+
         public virtual async Task<VM> AddAsync(CM cm)
         {
             EM em = default(EM);

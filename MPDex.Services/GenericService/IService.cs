@@ -33,6 +33,8 @@ namespace MPDex.Services
 
         Task<VM> FindAsync(params object[] keys);
 
+        Task<VM> MaxAsync(Expression<Func<EM, VM>> selector);
+
         Task<VM> AddAsync(CM cm);
 
         Task<VM> UpdateAsync(UM um, params object[] keys);

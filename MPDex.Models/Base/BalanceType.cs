@@ -4,7 +4,7 @@ using System.Text;
 
 namespace MPDex.Models.Base
 {
-    public enum StatementType : byte
+    public enum BalanceType
     {
         Book, Buy, Sell, Deposit, Payment
     }

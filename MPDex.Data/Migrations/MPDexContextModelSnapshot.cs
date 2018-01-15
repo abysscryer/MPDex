@@ -186,7 +186,10 @@ namespace MPDex.Data.Migrations
 
                     b.Property<short>("CoinId");
 
-                    b.Property<decimal>("Amount")
+                    b.Property<decimal>("BookAmount")
+                        .HasColumnType("decimal(20, 8)");
+
+                    b.Property<decimal>("CurrentAmount")
                         .HasColumnType("decimal(20, 8)");
 
                     b.HasKey("CustomerId", "CoinId");
@@ -199,14 +202,19 @@ namespace MPDex.Data.Migrations
             modelBuilder.Entity("MPDex.Models.Domain.Book", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValueSql("newid()");
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(20, 8)");
 
-                    b.Property<short>("CoinId");
+                    b.Property<byte>("BookStatus");
 
-                    b.Property<Guid>("CustomerId");
+                    b.Property<short?>("CoinId")
+                        .IsRequired();
+
+                    b.Property<Guid?>("CustomerId")
+                        .IsRequired();
 
                     b.Property<string>("IPAddress")
                         .IsRequired()
@@ -248,7 +256,8 @@ namespace MPDex.Data.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(16);
+                        .HasMaxLength(16)
+                        .IsUnicode(false);
 
                     b.Property<DateTime>("OnCreated")
                         .ValueGeneratedOnAdd()
@@ -257,6 +266,28 @@ namespace MPDex.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Coin");
+                });
+
+            modelBuilder.Entity("MPDex.Models.Domain.Contract", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValueSql("newid()");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(20, 8)");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(20, 8)");
+
+                    b.Property<Guid?>("TradeId")
+                        .IsRequired();
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TradeId");
+
+                    b.ToTable("Contract");
                 });
 
             modelBuilder.Entity("MPDex.Models.Domain.Customer", b =>
@@ -293,6 +324,159 @@ namespace MPDex.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Customer");
+                });
+
+            modelBuilder.Entity("MPDex.Models.Domain.Fee", b =>
+                {
+                    b.Property<short>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<short?>("CoinId")
+                        .IsRequired();
+
+                    b.Property<DateTime>("OnCreated")
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValueSql("getdate()");
+
+                    b.Property<decimal>("Percent")
+                        .HasColumnType("decimal(3, 3)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CoinId");
+
+                    b.ToTable("Fee");
+                });
+
+            modelBuilder.Entity("MPDex.Models.Domain.Order", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(20, 8)");
+
+                    b.Property<short?>("CoinId")
+                        .IsRequired();
+
+                    b.Property<Guid?>("ContractId")
+                        .IsRequired();
+
+                    b.Property<Guid?>("CustomerId")
+                        .IsRequired();
+
+                    b.Property<DateTime>("OnCreated")
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValueSql("getdate()");
+
+                    b.Property<byte>("OrderType");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(20, 8)");
+
+                    b.Property<decimal>("Stock")
+                        .HasColumnType("decimal(20, 8)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CoinId");
+
+                    b.HasIndex("ContractId");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("Order");
+                });
+
+            modelBuilder.Entity("MPDex.Models.Domain.Statement", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<decimal>("AfterAmount")
+                        .HasColumnType("decimal(20, 8)");
+
+                    b.Property<decimal>("BalanceAmount")
+                        .HasColumnType("decimal(20, 8)");
+
+                    b.Property<decimal>("BeforeAmount")
+                        .HasColumnType("decimal(20, 8)");
+
+                    b.Property<short>("CoinId");
+
+                    b.Property<Guid>("CustomerId");
+
+                    b.Property<decimal>("FeeAmount")
+                        .HasColumnType("decimal(20, 8)");
+
+                    b.Property<short?>("FeeId");
+
+                    b.Property<string>("IPAddress")
+                        .IsRequired()
+                        .HasMaxLength(36)
+                        .IsUnicode(false);
+
+                    b.Property<DateTime>("OnCreated")
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValueSql("getdate()");
+
+                    b.Property<DateTime?>("OnUpdated")
+                        .ValueGeneratedOnUpdate();
+
+                    b.Property<Guid?>("OrderId")
+                        .IsRequired();
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate();
+
+                    b.Property<byte>("StatementType");
+
+                    b.Property<string>("VerifyKey")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .IsUnicode(false);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CoinId");
+
+                    b.HasIndex("FeeId");
+
+                    b.HasIndex("OrderId")
+                        .IsUnique();
+
+                    b.HasIndex("CustomerId", "CoinId");
+
+                    b.ToTable("Statement");
+                });
+
+            modelBuilder.Entity("MPDex.Models.Domain.Trade", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValueSql("newid()");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(20, 8)");
+
+                    b.Property<short?>("CoinId")
+                        .IsRequired();
+
+                    b.Property<DateTime>("OnCreated")
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValueSql("getdate()");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(20, 8)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CoinId");
+
+                    b.ToTable("Trade");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -345,12 +529,12 @@ namespace MPDex.Data.Migrations
                     b.HasOne("MPDex.Models.Domain.Coin", "Coin")
                         .WithMany("Balances")
                         .HasForeignKey("CoinId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("MPDex.Models.Domain.Customer", "Customer")
                         .WithMany("Balances")
                         .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("MPDex.Models.Domain.Book", b =>
@@ -358,12 +542,81 @@ namespace MPDex.Data.Migrations
                     b.HasOne("MPDex.Models.Domain.Coin", "Coin")
                         .WithMany("Books")
                         .HasForeignKey("CoinId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("MPDex.Models.Domain.Customer", "Customer")
                         .WithMany("Books")
                         .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("MPDex.Models.Domain.Contract", b =>
+                {
+                    b.HasOne("MPDex.Models.Domain.Trade", "Trade")
+                        .WithMany("Contracts")
+                        .HasForeignKey("TradeId")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("MPDex.Models.Domain.Fee", b =>
+                {
+                    b.HasOne("MPDex.Models.Domain.Coin", "Coin")
+                        .WithMany("Fees")
+                        .HasForeignKey("CoinId")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("MPDex.Models.Domain.Order", b =>
+                {
+                    b.HasOne("MPDex.Models.Domain.Coin", "Coin")
+                        .WithMany("Orders")
+                        .HasForeignKey("CoinId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("MPDex.Models.Domain.Contract", "Contract")
+                        .WithMany("Orders")
+                        .HasForeignKey("ContractId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("MPDex.Models.Domain.Customer", "Customer")
+                        .WithMany("Orders")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("MPDex.Models.Domain.Statement", b =>
+                {
+                    b.HasOne("MPDex.Models.Domain.Coin", "Coin")
+                        .WithMany("Statements")
+                        .HasForeignKey("CoinId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("MPDex.Models.Domain.Customer", "Customer")
+                        .WithMany("Statements")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("MPDex.Models.Domain.Fee", "Fee")
+                        .WithMany("Statements")
+                        .HasForeignKey("FeeId");
+
+                    b.HasOne("MPDex.Models.Domain.Order", "Order")
+                        .WithOne("Statement")
+                        .HasForeignKey("MPDex.Models.Domain.Statement", "OrderId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("MPDex.Models.Domain.Balance", "Balance")
+                        .WithMany("Statements")
+                        .HasForeignKey("CustomerId", "CoinId")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("MPDex.Models.Domain.Trade", b =>
+                {
+                    b.HasOne("MPDex.Models.Domain.Coin", "Coin")
+                        .WithMany("Trades")
+                        .HasForeignKey("CoinId")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 #pragma warning restore 612, 618
         }

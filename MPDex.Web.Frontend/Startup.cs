@@ -12,7 +12,6 @@ using MPDex.Data;
 using MPDex.Repository;
 using MPDex.Services;
 using Newtonsoft.Json.Serialization;
-using System.Reflection;
 
 namespace MPDex.Web.Frontend
 {
