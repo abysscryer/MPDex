@@ -12,7 +12,7 @@ using System;
 namespace MPDex.Data.Migrations
 {
     [DbContext(typeof(MPDexContext))]
-    [Migration("20180115081228_Initial created")]
+    [Migration("20180115085916_Initial created")]
     partial class Initialcreated
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -183,9 +183,9 @@ namespace MPDex.Data.Migrations
 
             modelBuilder.Entity("MPDex.Models.Domain.Balance", b =>
                 {
-                    b.Property<Guid>("CustomerId");
+                    b.Property<Guid?>("CustomerId");
 
-                    b.Property<short>("CoinId");
+                    b.Property<short?>("CoinId");
 
                     b.Property<decimal>("BookAmount")
                         .HasColumnType("decimal(20, 8)");
@@ -401,12 +401,6 @@ namespace MPDex.Data.Migrations
                     b.Property<decimal>("BalanceAmount")
                         .HasColumnType("decimal(20, 8)");
 
-                    b.Property<short?>("BalanceCoinId")
-                        .IsRequired();
-
-                    b.Property<Guid?>("BalanceCustomerId")
-                        .IsRequired();
-
                     b.Property<decimal>("BeforeAmount")
                         .HasColumnType("decimal(20, 8)");
 
@@ -452,14 +446,12 @@ namespace MPDex.Data.Migrations
 
                     b.HasIndex("CoinId");
 
-                    b.HasIndex("CustomerId");
-
                     b.HasIndex("FeeId");
 
                     b.HasIndex("OrderId")
                         .IsUnique();
 
-                    b.HasIndex("BalanceCustomerId", "BalanceCoinId");
+                    b.HasIndex("CustomerId", "CoinId");
 
                     b.ToTable("Statement");
                 });
@@ -618,7 +610,7 @@ namespace MPDex.Data.Migrations
 
                     b.HasOne("MPDex.Models.Domain.Balance", "Balance")
                         .WithMany("Statements")
-                        .HasForeignKey("BalanceCustomerId", "BalanceCoinId")
+                        .HasForeignKey("CustomerId", "CoinId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 

@@ -10,9 +10,6 @@ namespace MPDex.Models.Domain
     /// </summary>
     public class Statement : Auditable<Guid>
     {
-        public Guid CustomerId { get; set; }
-        public short CoinId { get; set; }
-
         public StatementType StatementType { get; set; }
         public decimal BeforeAmount { get; set; }
         public decimal AfterAmount { get; set; }

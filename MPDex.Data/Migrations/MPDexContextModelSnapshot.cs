@@ -182,9 +182,9 @@ namespace MPDex.Data.Migrations
 
             modelBuilder.Entity("MPDex.Models.Domain.Balance", b =>
                 {
-                    b.Property<Guid>("CustomerId");
+                    b.Property<Guid?>("CustomerId");
 
-                    b.Property<short>("CoinId");
+                    b.Property<short?>("CoinId");
 
                     b.Property<decimal>("BookAmount")
                         .HasColumnType("decimal(20, 8)");
@@ -403,9 +403,11 @@ namespace MPDex.Data.Migrations
                     b.Property<decimal>("BeforeAmount")
                         .HasColumnType("decimal(20, 8)");
 
-                    b.Property<short>("CoinId");
+                    b.Property<short?>("CoinId")
+                        .IsRequired();
 
-                    b.Property<Guid>("CustomerId");
+                    b.Property<Guid?>("CustomerId")
+                        .IsRequired();
 
                     b.Property<decimal>("FeeAmount")
                         .HasColumnType("decimal(20, 8)");

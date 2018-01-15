@@ -12,7 +12,7 @@ namespace MPDex.Data.Mappers
         {
             builder.Entity<Balance>(n =>
             {
-                n.HasKey(t => new { t.CustomerId, t.CoinId });
+                n.HasKey("CustomerId", "CoinId");
 
                 n.HasOne(b => b.Customer)
                  .WithMany(c => c.Balances)

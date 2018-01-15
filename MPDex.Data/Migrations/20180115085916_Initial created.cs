@@ -350,8 +350,6 @@ namespace MPDex.Data.Migrations
                     Id = table.Column<Guid>(nullable: false),
                     AfterAmount = table.Column<decimal>(type: "decimal(20, 8)", nullable: false),
                     BalanceAmount = table.Column<decimal>(type: "decimal(20, 8)", nullable: false),
-                    BalanceCoinId = table.Column<short>(nullable: false),
-                    BalanceCustomerId = table.Column<Guid>(nullable: false),
                     BeforeAmount = table.Column<decimal>(type: "decimal(20, 8)", nullable: false),
                     CoinId = table.Column<short>(nullable: false),
                     CustomerId = table.Column<Guid>(nullable: false),
@@ -393,8 +391,8 @@ namespace MPDex.Data.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Statement_Balance_BalanceCustomerId_BalanceCoinId",
-                        columns: x => new { x.BalanceCustomerId, x.BalanceCoinId },
+                        name: "FK_Statement_Balance_CustomerId_CoinId",
+                        columns: x => new { x.CustomerId, x.CoinId },
                         principalTable: "Balance",
                         principalColumns: new[] { "CustomerId", "CoinId" },
                         onDelete: ReferentialAction.Restrict);
@@ -485,11 +483,6 @@ namespace MPDex.Data.Migrations
                 column: "CoinId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Statement_CustomerId",
-                table: "Statement",
-                column: "CustomerId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Statement_FeeId",
                 table: "Statement",
                 column: "FeeId");
@@ -501,9 +494,9 @@ namespace MPDex.Data.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Statement_BalanceCustomerId_BalanceCoinId",
+                name: "IX_Statement_CustomerId_CoinId",
                 table: "Statement",
-                columns: new[] { "BalanceCustomerId", "BalanceCoinId" });
+                columns: new[] { "CustomerId", "CoinId" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Trade_CoinId",

@@ -21,8 +21,5 @@ namespace MPDex.Models.Domain
         public virtual Customer Customer { get; set; }
         
         public virtual Coin Coin { get; set; }
-
-        // forignkeys are CustomerId, CoinId
-        //public virtual Deposit Deposit { get; set; }
     }
 }

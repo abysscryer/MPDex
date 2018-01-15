@@ -9,9 +9,9 @@ namespace MPDex.Models.Domain
     /// </summary>
     public class Balance : Entity
     {
-        public Guid CustomerId { get; set; }
+        //public Guid CustomerId { get; set; }
 
-        public short CoinId { get; set; }
+        //public short CoinId { get; set; }
 
         public decimal CurrentAmount { get; set; }
 
