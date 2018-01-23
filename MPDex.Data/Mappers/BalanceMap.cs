@@ -16,28 +16,17 @@ namespace MPDex.Data.Mappers
 
                 n.HasOne(b => b.Customer)
                  .WithMany(c => c.Balances)
-                 .IsRequired()
                  .OnDelete(DeleteBehavior.Restrict);
 
                 n.HasOne(b => b.Coin)
                  .WithMany(c => c.Balances)
-                 .IsRequired()
                  .OnDelete(DeleteBehavior.Restrict);
 
-                n.HasMany(b => b.Statements)
-                 .WithOne(s => s.Balance)
-                 .IsRequired();
-
-                n.Property(b => b.CurrentAmount)
+                n.Property(b => b.Amount)
                  .IsRequired()
-                 .HasColumnType("decimal(20, 8)");
-
-                n.Property(b => b.BookAmount)
-                 .IsRequired()
-                 .HasColumnType("decimal(20, 8)");
+                 .HasColumnType("decimal(20, 8)")
+                 .HasDefaultValue(0);
             });
-
-
         }
     }
 }

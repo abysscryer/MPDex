@@ -7,45 +7,27 @@ using System.Threading.Tasks;
 
 namespace MPDex.Services
 {
-    public class CoinService : Service<Coin, CoinCreateModel, CoinUpdateModel, CoinViewModel>, ICoinService
+    //public interface ICoinService : IService<Coin, CoinCreateModel, CoinCreateModel, CoinViewModel>
+    //{ }
+
+    public interface ICoinService : IService<Coin>
     {
-        private readonly ICoinRepository repository;
-        private readonly ILogger<CoinService> logger;
+        Task<CoinViewModel> AddAsync(CoinCreateModel cm);
+    }
 
+    public class CoinService : Service<Coin>, ICoinService
+    {
         public CoinService(IUnitOfWork unitOfWork, 
-                           ILogger<CoinService> logger, 
-                           ILogger<Service<Coin, CoinCreateModel, CoinUpdateModel, CoinViewModel>> genericLogger)
-            : base(unitOfWork, genericLogger)
-        {
-            this.repository = unitOfWork.CoinRepository;
-            this.logger = logger;
-        }
+                           ILogger<Service<Coin>> logger)
+            : base(unitOfWork, logger)
+        {}
         
-        //public async Task<short> GetMaxAsync()
-        //{
-        //    short max;
-
-        //    try
-        //    {
-        //        max = await this.repository.MaxAsync();
-        //    }
-        //    catch (Exception ex )
-        //    {
-        //        logger.LogError(ex, ex.Message);
-        //        throw;
-        //    }
-
-        //    return max;
-        //}
-
-        public override async Task<CoinViewModel> AddAsync(CoinCreateModel cm)
+        public async Task<CoinViewModel> AddAsync(CoinCreateModel cm)
         {
-            var max = await base.MaxAsync(x => new CoinViewModel { Id = x.Id });
-            //var id = await this.GetMaxAsync();
-            //cm.Id = ++id;
-            var id = max.Id;
+            var max = await base.MaxAsync(x => new CoinViewModel { Id =  x.Id });
+            cm.Id = (short)(max==null? 1:++max.Id);
 
-            return await base.AddAsync(cm);
+            return await base.AddAsync<CoinCreateModel, CoinViewModel>(cm);
         }
     }
 }

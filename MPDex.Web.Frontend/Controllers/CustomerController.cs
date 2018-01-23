@@ -1,11 +1,7 @@
-﻿using AutoMapper;
-using GenFu;
-using Microsoft.AspNetCore.Mvc;
-using MPDex.Models.Domain;
+﻿using Microsoft.AspNetCore.Mvc;
 using MPDex.Models.ViewModels;
 using MPDex.Services;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace MPDex.Web.Frontend.Controllers
@@ -24,12 +20,15 @@ namespace MPDex.Web.Frontend.Controllers
         [HttpGet]
         public async Task<IActionResult> Get(int pageIndex=0, int pageSize=20, int indexFrom = 0, int itemCount=0)
         {
-            var result = await this.service.GetPagedListAsync(x => new CustomerViewModel {
-                    NickName = x.NickName,
-                    FamilyName = x.FamilyName,
-                    GivenName = x.GivenName,
-                    Email = x.Email },
-                pageIndex:pageIndex, pageSize:pageSize, indexFrom:indexFrom, itemCount:itemCount);
+            var result = await this.service.GetPagedListAsync(x => new CustomerViewModel
+            {
+                Id = x.Id,
+                NickName = x.NickName,
+                FamilyName = x.FamilyName,
+                GivenName = x.GivenName,
+                Email = x.Email,
+                CellPhone = x.CellPhone
+            }, pageIndex:pageIndex, pageSize:pageSize, indexFrom:indexFrom, itemCount:itemCount);
 
             return Ok(result);
         }
@@ -41,7 +40,7 @@ namespace MPDex.Web.Frontend.Controllers
             if (id == Guid.Empty)
                 return BadRequest(id);
 
-            var customer = await this.service.FindAsync(id);
+            var customer = await this.service.FindAsync<CustomerViewModel>(id);
 
             if (customer == null)
                 return NotFound(id);
@@ -51,19 +50,19 @@ namespace MPDex.Web.Frontend.Controllers
         
         // POST api/<controller>
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody]CustomerCreateModel vm)
+        public async Task<IActionResult> Post([FromBody]CustomerCreateModel cm)
         {
             if (!ModelState.IsValid) 
                 return BadRequest(ModelState);
 
-            var customer = await this.service.AddAsync(vm);
+            var customer = await this.service.AddAsync(cm);
             
             return Ok(customer);
         }
 
         // PUT api/<controller>/5
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> Put(Guid id, [FromBody]CustomerUpdateModel vm)
+        public async Task<IActionResult> Put(Guid id, [FromBody]CustomerUpdateModel um)
         {
             if (id == Guid.Empty)
                 return BadRequest(id);
@@ -71,20 +70,9 @@ namespace MPDex.Web.Frontend.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var isSuccess = await this.service.UpdateAsync(vm, id);
+            var vm = await this.service.UpdateAsync<CustomerUpdateModel, CustomerViewModel>(um, id);
 
-            return Ok(isSuccess);
-        }
-
-        // DELETE api/<controller>/5
-        [HttpDelete("{id:guid}")]
-        public async Task<IActionResult> Delete(Guid id)
-        {
-            if (id == Guid.Empty)
-                return BadRequest(id);
-
-            var isSuccess = await this.service.RemoveAsync(id);
-            return Ok(isSuccess);
+            return Ok(vm);
         }
     }
 }

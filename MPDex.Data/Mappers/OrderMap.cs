@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MPDex.Models.Base;
 using MPDex.Models.Domain;
 using System;
 using System.Collections.Generic;
@@ -12,31 +13,22 @@ namespace MPDex.Data.Mappers
         {
             builder.Entity<Order>(n =>
             {
-                n.HasKey(o => o.Id);
-
-                n.HasOne(o => o.Statement)
-                 .WithOne(s => s.Order)
-                 .IsRequired()
+                n.HasOne(o => o.Coin)
+                 .WithMany(c => c.Orders)
+                 .HasForeignKey(o => o.CoinId)
                  .OnDelete(DeleteBehavior.Restrict);
 
                 n.HasOne(o => o.Customer)
                  .WithMany(c => c.Orders)
-                 .IsRequired()
-                 .OnDelete(DeleteBehavior.Restrict);
-
-                n.HasOne(o => o.Coin)
-                 .WithMany(c => c.Orders)
-                 .IsRequired()
                  .OnDelete(DeleteBehavior.Restrict);
 
                 n.HasOne(o => o.Contract)
                  .WithMany(c => c.Orders)
-                 .IsRequired()
                  .OnDelete(DeleteBehavior.Restrict);
 
-                n.Property(o => o.OrderType)
-                 .IsRequired();
-                
+                n.Property(o => o.OrderCount)
+                 .HasDefaultValue(0);
+
                 n.Property(o => o.Price)
                  .IsRequired()
                  .HasColumnType("decimal(20, 8)");

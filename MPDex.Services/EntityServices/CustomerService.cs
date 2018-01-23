@@ -1,32 +1,41 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using MPDex.Models.Domain;
 using MPDex.Models.ViewModels;
 using MPDex.Repository;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MPDex.Services
 {
-    public class CustomerService : Service<Customer, CustomerCreateModel, CustomerUpdateModel, CustomerViewModel>, ICustomerService
+    public interface ICustomerService : IService<Customer>
     {
+        Task<CustomerViewModel> AddAsync(CustomerCreateModel cm);
+    }
 
-        private readonly ICustomerRepository repository;
-        private readonly ILogger<CustomerService> logger;
-
-        public CustomerService(IUnitOfWork unitOfWork, 
-                               ILogger<CustomerService> logger, 
-                               ILogger<Service<Customer, CustomerCreateModel, CustomerUpdateModel, CustomerViewModel>> genericLogger)
-            : base(unitOfWork, genericLogger)
+    public class CustomerService : Service<Customer>, ICustomerService
+    {
+        private IRepository<Coin> coinRepository;
+        
+        public CustomerService(IUnitOfWork unitOfWork,
+                               ILogger<Service<Customer>> logger)
+            : base(unitOfWork, logger)
         {
-            this.repository = unitOfWork.CustomerRepository;
-            this.logger = logger;
+            this.coinRepository = unitOfWork.GetRepository<Coin>();
         }
 
-        public override async Task<CustomerViewModel> AddAsync(CustomerCreateModel cm)
+        public async Task<CustomerViewModel> AddAsync(CustomerCreateModel cm)
         {
             cm.Id = Guid.NewGuid();
-
-            return await base.AddAsync(cm);
+            
+            var coins = await coinRepository.Get(x => new CoinViewModel { Id = x.Id }).ToListAsync();
+            cm.Balances = new List<Balance>();
+            coins.ForEach(x => cm.Balances.Add(new Balance { CoinId = x.Id, CustomerId = cm.Id }));
+            
+            return await base.AddAsync<CustomerCreateModel, CustomerViewModel>(cm);
         }
     }
 }

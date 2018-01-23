@@ -17,14 +17,7 @@ namespace MPDex.Repository
         public UnitOfWork(TContext context)
         {
             this.context = context ?? throw new ArgumentNullException(nameof(context));
-
-            this.CustomerRepository = new CustomerRepository(this.context);
-            this.CoinRepository = new CoinRepository(this.context);
         }
-
-        public ICustomerRepository CustomerRepository { get; }
-
-        public ICoinRepository CoinRepository { get; }
 
         /// <summary>
         /// Gets the db context.

@@ -11,9 +11,6 @@ namespace MPDex.Repository
     /// </summary>
     public interface IUnitOfWork : IDisposable
     {
-
-        ICustomerRepository CustomerRepository { get; }
-        ICoinRepository CoinRepository { get; }
         /// <summary>
         /// Gets the specified repository for the <typeparamref name="TEntity"/>.
         /// </summary>

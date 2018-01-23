@@ -36,7 +36,7 @@ namespace MPDex.Web.Frontend.Controllers
             if(id == 0)
                 return BadRequest(id);
 
-            var coin = await this.service.FindAsync(id);
+            var coin = await this.service.FindAsync<CoinViewModel>(id);
 
             if (coin == null)
                 return NotFound(id);
@@ -55,22 +55,7 @@ namespace MPDex.Web.Frontend.Controllers
             
             return Ok(vm);
         }
-
-        // PUT api/<controller>/5
-        [HttpPut("{id:int}")]
-        public async Task<IActionResult> Put(short id, [FromBody]CoinUpdateModel um)
-        {
-            if (id == 0)
-                return BadRequest(id);
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var vm = await this.service.UpdateAsync(um, id);
-            
-            return Ok(vm);
-        }
-
+        
         // DELETE api/<controller>/5
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(short id)

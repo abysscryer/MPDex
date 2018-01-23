@@ -11,22 +11,17 @@ namespace MPDex.Data.Mappers
         public FeeMap(ModelBuilder builder)
         {
             builder.Entity<Fee>(n => {
-                //primary key
-                n.HasKey(f => f.Id);
-                //foreign key Coin
+
                 n.HasOne(f => f.Coin)
                  .WithMany(c => c.Fees)
-                 .IsRequired()
                  .OnDelete(DeleteBehavior.Restrict);
-                
-                n.HasMany(f => f.Statements)
-                 .WithOne(s => s.Fee);
 
                 n.Property(c => c.Id)
-                 .UseSqlServerIdentityColumn();
+                 .ValueGeneratedNever();
 
                 n.Property(f => f.Percent)
-                 .IsRequired().HasColumnType("decimal(3, 3)");
+                 .IsRequired()
+                 .HasColumnType("decimal(3, 3)");
 
                 n.Property(f => f.OnCreated)
                  .HasDefaultValueSql("getdate()");

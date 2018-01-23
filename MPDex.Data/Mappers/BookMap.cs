@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MPDex.Models.Base;
 using MPDex.Models.Domain;
 
 namespace MPDex.Data.Mappers
@@ -15,21 +16,21 @@ namespace MPDex.Data.Mappers
         public BookMap(ModelBuilder builder)
         {
             builder.Entity<Book>(n => {
-                
-                n.HasKey(t => t.Id);
-                
+
                 n.HasOne(b => b.Coin)
                  .WithMany(c => c.Books)
-                 .IsRequired()
+                 .HasForeignKey(b => b.CoinId)
                  .OnDelete(DeleteBehavior.Restrict);
-                
+
                 n.HasOne(b => b.Customer)
                  .WithMany(c => c.Books)
-                 .IsRequired()
                  .OnDelete(DeleteBehavior.Restrict);
-                 
-                n.Property(b => b.Id)
-                 .HasDefaultValueSql("newid()");
+                
+                n.Property(b => b.BookStatus)
+                 .HasDefaultValue(BookStatus.Placed);
+
+                n.Property(b => b.OrderCount)
+                 .HasDefaultValue(0);
 
                 n.Property(b => b.Price)
                  .IsRequired()
@@ -44,7 +45,6 @@ namespace MPDex.Data.Mappers
                  .HasColumnType("decimal(20, 8)");
 
                 n.Property(b => b.OnCreated)
-                 .IsRequired()
                  .HasDefaultValueSql("getdate()");
 
                 n.Property(b => b.OnUpdated)

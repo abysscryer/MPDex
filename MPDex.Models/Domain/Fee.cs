@@ -9,7 +9,9 @@ namespace MPDex.Models.Domain
     {
         public decimal Percent { get; set; }
 
+        public short CoinId { get; set; }
         public virtual Coin Coin { get; set; }
+
         public virtual ICollection<Statement> Statements { get; set; }
     }
 }

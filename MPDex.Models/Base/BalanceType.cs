@@ -4,8 +4,8 @@ using System.Text;
 
 namespace MPDex.Models.Base
 {
-    public enum BalanceType
+    public enum BalanceType : byte
     {
-        Book, Buy, Sell, Deposit, Payment
+        Outgo, Income
     }
 }

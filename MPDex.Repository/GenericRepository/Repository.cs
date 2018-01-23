@@ -1,12 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using Microsoft.Extensions.Logging;
 using MPDex.Models.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace MPDex.Repository
@@ -49,6 +47,38 @@ namespace MPDex.Repository
         /// <param name="disableTracking"><c>True</c> to disable changing tracking; otherwise, <c>false</c>. Default to <c>true</c>.</param>
         /// <returns>An <see cref="IPagedList{ViewModel}"/> that contains elements that satisfy the condition specified by <paramref name="predicate"/>.</returns>
         /// <remarks>This method default no-tracking query.</remarks>
+        public IQueryable<EM> Get(
+            Expression<Func<EM, bool>> predicate = null,
+            Func<IQueryable<EM>, IOrderedQueryable<EM>> orderBy = null,
+            Func<IQueryable<EM>, IIncludableQueryable<EM, object>> include = null,
+            int pageIndex = 0,
+            int pageSize = 20,
+            bool disableTracking = true)
+        {
+            IQueryable<EM> query = this.dbSet;
+            if (disableTracking)
+            {
+                query = query.AsNoTracking();
+            }
+
+            if (include != null)
+            {
+                query = include(query);
+            }
+
+            if (predicate != null)
+            {
+                query = query.Where(predicate);
+            }
+
+            if (orderBy != null)
+            {
+                query = orderBy(query);
+            }
+
+            return query;
+        }
+
         public IQueryable<VM> Get<VM>(Expression<Func<EM, VM>> selector,
             Expression<Func<EM, bool>> predicate = null,
             Func<IQueryable<EM>, IOrderedQueryable<EM>> orderBy = null,
@@ -78,29 +108,26 @@ namespace MPDex.Repository
             {
                 query = orderBy(query);
             }
-
+            
             return query.Select(selector);
         }
-        
+
         public async Task<EM> FindAsync(params object[] keys)
         {
             return await this.dbSet.FindAsync(keys);
         }
+
+        public void Add(EM em) => this.dbSet.Add(em);
+
+        public void Add(IEnumerable<EM> em) => this.dbSet.AddRange(em);
+
+        public void Update(EM em) => this.dbSet.Update(em);
         
-        public void Add(EM em)
-        {
-            this.dbSet.Add(em);
-        }
+        public void Update(IEnumerable<EM> em) => this.dbSet.UpdateRange(em);
 
-        public void Update(EM em)
-        {
-            this.dbSet.Update(em);
-        }
+        public void Remove(EM em) => this.dbSet.Remove(em);
 
-        public void Remove(EM em)
-        {
-            this.dbSet.Remove(em);
-        }
+        public void Remove(IEnumerable<EM> em) => this.dbSet.RemoveRange(em);
 
         /// <summary>
         /// Gets the count based on a predicate.
@@ -118,5 +145,14 @@ namespace MPDex.Repository
                 return this.dbSet.Count(predicate);
             }
         }
+
+        /// <summary>
+        /// Uses raw SQL queries to fetch the specified <typeparamref name="TEntity" /> data.
+        /// </summary>
+        /// <param name="sql">The raw SQL.</param>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns>An <see cref="IQueryable{TEntity}" /> that contains elements that satisfy the condition specified by raw SQL.</returns>
+        //public IQueryable<EM> FromSql(string sql, params object[] parameters) => this.dbSet.FromSql(sql, parameters);
+
     }
 }

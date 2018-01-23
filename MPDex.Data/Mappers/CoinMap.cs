@@ -11,28 +11,6 @@ namespace MPDex.Data.Mappers
         public CoinMap(ModelBuilder builder)
         {
             builder.Entity<Coin>(n => {
-                
-                n.HasKey(c => c.Id);
-                
-                n.HasMany(c => c.Books)
-                 .WithOne(b => b.Coin)
-                 .IsRequired();
-
-                n.HasMany(c => c.Trades)
-                 .WithOne(t => t.Coin)
-                 .IsRequired();
-
-                n.HasMany(c => c.Orders)
-                 .WithOne(o => o.Coin)
-                 .IsRequired();
-
-                n.HasMany(c => c.Balances)
-                 .WithOne(b => b.Coin)
-                 .IsRequired();
-
-                n.HasMany(c => c.Statements)
-                 .WithOne(s => s.Coin)
-                 .IsRequired();
 
                 n.Property(c => c.Id)
                     .ValueGeneratedNever();

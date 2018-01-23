@@ -49,6 +49,8 @@ namespace MPDex.Web.Frontend
 
             services.AddScoped<IBookService, BookService>();
 
+            services.AddScoped<IFeeService, FeeService>();
+
             // inject email service
             services.AddTransient<IEmailSender, EmailSender>();
 

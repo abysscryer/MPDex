@@ -12,20 +12,15 @@ namespace MPDex.Data.Mappers
         {
             builder.Entity<Trade>(n =>
             {
-                n.HasKey(t => t.Id);
-
                 n.HasOne(t => t.Coin)
                  .WithMany(c => c.Trades)
-                 .IsRequired()
+                 .HasForeignKey(t => t.CoinId)
                  .OnDelete(DeleteBehavior.Restrict);
 
-                n.HasMany(t => t.Contracts)
-                 .WithOne(c => c.Trade)
-                 .IsRequired();
-
-                n.Property(b => b.Id)
-                    .HasDefaultValueSql("newid()");
-
+                n.HasOne(t => t.Customer)
+                 .WithMany(c => c.Trades)
+                 .OnDelete(DeleteBehavior.Restrict);
+                
                 n.Property(b => b.Price)
                  .IsRequired()
                  .HasColumnType("decimal(20, 8)");

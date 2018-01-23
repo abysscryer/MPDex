@@ -12,8 +12,8 @@ using System;
 namespace MPDex.Data.Migrations
 {
     [DbContext(typeof(MPDexContext))]
-    [Migration("20180115085916_Initial created")]
-    partial class Initialcreated
+    [Migration("20180123025642_initial created")]
+    partial class initialcreated
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -183,15 +183,14 @@ namespace MPDex.Data.Migrations
 
             modelBuilder.Entity("MPDex.Models.Domain.Balance", b =>
                 {
-                    b.Property<Guid?>("CustomerId");
+                    b.Property<Guid>("CustomerId");
 
-                    b.Property<short?>("CoinId");
+                    b.Property<short>("CoinId");
 
-                    b.Property<decimal>("BookAmount")
-                        .HasColumnType("decimal(20, 8)");
-
-                    b.Property<decimal>("CurrentAmount")
-                        .HasColumnType("decimal(20, 8)");
+                    b.Property<decimal>("Amount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("decimal(20, 8)")
+                        .HasDefaultValue(0m);
 
                     b.HasKey("CustomerId", "CoinId");
 
@@ -203,19 +202,22 @@ namespace MPDex.Data.Migrations
             modelBuilder.Entity("MPDex.Models.Domain.Book", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValueSql("newid()");
+                        .ValueGeneratedOnAdd();
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(20, 8)");
 
-                    b.Property<byte>("BookStatus");
+                    b.Property<byte>("BookStatus")
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValue((byte)1);
 
-                    b.Property<short?>("CoinId")
-                        .IsRequired();
+                    b.Property<byte>("BookType");
 
-                    b.Property<Guid?>("CustomerId")
-                        .IsRequired();
+                    b.Property<short>("CoinId");
+
+                    b.Property<short>("CurrencyId");
+
+                    b.Property<Guid>("CustomerId");
 
                     b.Property<string>("IPAddress")
                         .IsRequired()
@@ -229,7 +231,9 @@ namespace MPDex.Data.Migrations
                     b.Property<DateTime?>("OnUpdated")
                         .ValueGeneratedOnUpdate();
 
-                    b.Property<byte>("OrderType");
+                    b.Property<byte>("OrderCount")
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValue((byte)0);
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(20, 8)");
@@ -245,6 +249,8 @@ namespace MPDex.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CoinId");
+
+                    b.HasIndex("CurrencyId");
 
                     b.HasIndex("CustomerId");
 
@@ -272,8 +278,7 @@ namespace MPDex.Data.Migrations
             modelBuilder.Entity("MPDex.Models.Domain.Contract", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValueSql("newid()");
+                        .ValueGeneratedOnAdd();
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(20, 8)");
@@ -281,8 +286,7 @@ namespace MPDex.Data.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(20, 8)");
 
-                    b.Property<Guid?>("TradeId")
-                        .IsRequired();
+                    b.Property<Guid>("TradeId");
 
                     b.HasKey("Id");
 
@@ -294,8 +298,7 @@ namespace MPDex.Data.Migrations
             modelBuilder.Entity("MPDex.Models.Domain.Customer", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValueSql("newid()");
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("CellPhone")
                         .HasMaxLength(20)
@@ -329,12 +332,9 @@ namespace MPDex.Data.Migrations
 
             modelBuilder.Entity("MPDex.Models.Domain.Fee", b =>
                 {
-                    b.Property<short>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<short>("Id");
 
-                    b.Property<short?>("CoinId")
-                        .IsRequired();
+                    b.Property<short>("CoinId");
 
                     b.Property<DateTime>("OnCreated")
                         .ValueGeneratedOnAdd()
@@ -358,18 +358,25 @@ namespace MPDex.Data.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(20, 8)");
 
-                    b.Property<short?>("CoinId")
-                        .IsRequired();
+                    b.Property<Guid>("BookId");
 
-                    b.Property<Guid?>("ContractId")
-                        .IsRequired();
+                    b.Property<short>("CoinId");
 
-                    b.Property<Guid?>("CustomerId")
-                        .IsRequired();
+                    b.Property<Guid>("ContractId");
+
+                    b.Property<short>("CurrencyId");
+
+                    b.Property<Guid>("CustomerId");
 
                     b.Property<DateTime>("OnCreated")
                         .ValueGeneratedOnAdd()
                         .HasDefaultValueSql("getdate()");
+
+                    b.Property<byte>("OrderCount")
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValue((byte)0);
+
+                    b.Property<byte>("OrderStatus");
 
                     b.Property<byte>("OrderType");
 
@@ -384,6 +391,8 @@ namespace MPDex.Data.Migrations
                     b.HasIndex("CoinId");
 
                     b.HasIndex("ContractId");
+
+                    b.HasIndex("CurrencyId");
 
                     b.HasIndex("CustomerId");
 
@@ -401,19 +410,19 @@ namespace MPDex.Data.Migrations
                     b.Property<decimal>("BalanceAmount")
                         .HasColumnType("decimal(20, 8)");
 
+                    b.Property<bool>("BalanceType");
+
                     b.Property<decimal>("BeforeAmount")
                         .HasColumnType("decimal(20, 8)");
 
-                    b.Property<short?>("CoinId")
-                        .IsRequired();
+                    b.Property<short>("CoinId");
 
-                    b.Property<Guid?>("CustomerId")
-                        .IsRequired();
+                    b.Property<Guid>("CustomerId");
 
                     b.Property<decimal>("FeeAmount")
                         .HasColumnType("decimal(20, 8)");
 
-                    b.Property<short?>("FeeId");
+                    b.Property<short>("FeeId");
 
                     b.Property<string>("IPAddress")
                         .IsRequired()
@@ -427,13 +436,12 @@ namespace MPDex.Data.Migrations
                     b.Property<DateTime?>("OnUpdated")
                         .ValueGeneratedOnUpdate();
 
-                    b.Property<Guid?>("OrderId")
-                        .IsRequired();
-
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
                         .IsRequired()
                         .ValueGeneratedOnAddOrUpdate();
+
+                    b.Property<Guid>("StatementId");
 
                     b.Property<byte>("StatementType");
 
@@ -448,9 +456,6 @@ namespace MPDex.Data.Migrations
 
                     b.HasIndex("FeeId");
 
-                    b.HasIndex("OrderId")
-                        .IsUnique();
-
                     b.HasIndex("CustomerId", "CoinId");
 
                     b.ToTable("Statement");
@@ -459,14 +464,16 @@ namespace MPDex.Data.Migrations
             modelBuilder.Entity("MPDex.Models.Domain.Trade", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValueSql("newid()");
+                        .ValueGeneratedOnAdd();
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(20, 8)");
 
-                    b.Property<short?>("CoinId")
-                        .IsRequired();
+                    b.Property<short>("CoinId");
+
+                    b.Property<short>("CurrencyId");
+
+                    b.Property<Guid>("CustomerId");
 
                     b.Property<DateTime>("OnCreated")
                         .ValueGeneratedOnAdd()
@@ -475,9 +482,15 @@ namespace MPDex.Data.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(20, 8)");
 
+                    b.Property<byte>("TradeType");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CoinId");
+
+                    b.HasIndex("CurrencyId");
+
+                    b.HasIndex("CustomerId");
 
                     b.ToTable("Trade");
                 });
@@ -547,6 +560,11 @@ namespace MPDex.Data.Migrations
                         .HasForeignKey("CoinId")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("MPDex.Models.Domain.Coin", "Currency")
+                        .WithMany()
+                        .HasForeignKey("CurrencyId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("MPDex.Models.Domain.Customer", "Customer")
                         .WithMany("Books")
                         .HasForeignKey("CustomerId")
@@ -581,6 +599,11 @@ namespace MPDex.Data.Migrations
                         .HasForeignKey("ContractId")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("MPDex.Models.Domain.Coin", "Currency")
+                        .WithMany()
+                        .HasForeignKey("CurrencyId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("MPDex.Models.Domain.Customer", "Customer")
                         .WithMany("Orders")
                         .HasForeignKey("CustomerId")
@@ -601,11 +624,7 @@ namespace MPDex.Data.Migrations
 
                     b.HasOne("MPDex.Models.Domain.Fee", "Fee")
                         .WithMany("Statements")
-                        .HasForeignKey("FeeId");
-
-                    b.HasOne("MPDex.Models.Domain.Order", "Order")
-                        .WithOne("Statement")
-                        .HasForeignKey("MPDex.Models.Domain.Statement", "OrderId")
+                        .HasForeignKey("FeeId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("MPDex.Models.Domain.Balance", "Balance")
@@ -619,6 +638,16 @@ namespace MPDex.Data.Migrations
                     b.HasOne("MPDex.Models.Domain.Coin", "Coin")
                         .WithMany("Trades")
                         .HasForeignKey("CoinId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("MPDex.Models.Domain.Coin", "Currency")
+                        .WithMany()
+                        .HasForeignKey("CurrencyId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("MPDex.Models.Domain.Customer", "Customer")
+                        .WithMany("Trades")
+                        .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 #pragma warning restore 612, 618

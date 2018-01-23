@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MPDex.Models.Base;
 using MPDex.Models.Domain;
 using System;
 using System.Collections.Generic;
@@ -11,31 +12,22 @@ namespace MPDex.Data.Mappers
         public StatementMap(ModelBuilder builder)
         {
             builder.Entity<Statement>(n => {
-                n.HasKey(s => s.Id);
-
-                n.HasOne(s => s.Order)
-                 .WithOne(o => o.Statement)
-                 .IsRequired()
-                 .OnDelete(DeleteBehavior.Restrict);
-
+                
                 n.HasOne(s => s.Customer)
                  .WithMany(c => c.Statements)
-                 .IsRequired()
                  .OnDelete(DeleteBehavior.Restrict);
 
                 n.HasOne(s => s.Coin)
                  .WithMany(c => c.Statements)
-                 .IsRequired()
                  .OnDelete(DeleteBehavior.Restrict);
 
                 n.HasOne(s => s.Balance)
                  .WithMany(b => b.Statements)
-                 .HasForeignKey("CustomerId", "CoinId")
-                 .IsRequired()
                  .OnDelete(DeleteBehavior.Restrict);
 
                 n.HasOne(s => s.Fee)
-                 .WithMany(f => f.Statements);
+                 .WithMany(f => f.Statements)
+                 .OnDelete(DeleteBehavior.Restrict);
 
                 n.Property(s => s.BeforeAmount)
                  .IsRequired()

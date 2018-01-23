@@ -13,6 +13,7 @@ namespace MPDex.Models.Domain
         public decimal Price { get; set; }
         public decimal Amount { get; set; }
 
+        public Guid TradeId { get; set; }
         public virtual Trade Trade { get; set; }
 
         public virtual ICollection<Order> Orders { get; set; }

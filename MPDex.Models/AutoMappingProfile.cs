@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using MPDex.Models.Domain;
 using MPDex.Models.ViewModels;
+using System;
 
 namespace MPDex.Models
 {
@@ -30,16 +31,14 @@ namespace MPDex.Models
             //Book mapping
             CreateMap<Book, BookCreateModel>();
             CreateMap<BookCreateModel, Book>();
-            CreateMap<Book, BookUpdateModel>();
-            CreateMap<BookUpdateModel, Book>();
+            CreateMap<Book, BookOrderModel>();
+            CreateMap<BookOrderModel, Book>();
             CreateMap<Book, BookViewModel>();
             CreateMap<BookViewModel, Book>();
 
             //Coin mapping
             CreateMap<Coin, CoinCreateModel>();
             CreateMap<CoinCreateModel, Coin>();
-            CreateMap<Coin, CoinUpdateModel>();
-            CreateMap<CoinUpdateModel, Coin>();
             CreateMap<Coin, CoinViewModel>();
             CreateMap<CoinViewModel, Coin>();
 
@@ -52,6 +51,7 @@ namespace MPDex.Models
             //Customer mapping
             CreateMap<Customer, CustomerCreateModel>();
             CreateMap<CustomerCreateModel, Customer>();
+                //.ForMember(em => em.Id, opt => Guid.NewGuid());
             CreateMap<Customer, CustomerUpdateModel>();
             CreateMap<CustomerUpdateModel, Customer>();
             CreateMap<Customer, CustomerViewModel>();
@@ -60,6 +60,7 @@ namespace MPDex.Models
             //Fee mapping
             CreateMap<Fee, FeeCreateModel>();
             CreateMap<FeeCreateModel, Fee>();
+                //.ForMember(em => em.Coin, opt => opt.MapFrom(src => new Coin { Id = src.CoinId }));
             CreateMap<Fee, FeeViewModel>();
             CreateMap<FeeViewModel, Fee>();
 

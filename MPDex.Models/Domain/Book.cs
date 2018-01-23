@@ -8,9 +8,11 @@ namespace MPDex.Models.Domain
     /// </summary>
     public class Book : Auditable<Guid>
     {
-        public OrderType OrderType { get; set; }
+        public BookType BookType { get; set; }
 
         public BookStatus BookStatus { get; set; }
+
+        public byte OrderCount { get; set; }
 
         public decimal Price { get; set; }
 
@@ -18,8 +20,13 @@ namespace MPDex.Models.Domain
 
         public decimal Stock { get; set; }
         
+        public Guid CustomerId { get; set; }
         public virtual Customer Customer { get; set; }
         
+        public short CoinId { get; set; }
         public virtual Coin Coin { get; set; }
+
+        public short CurrencyId { get; set; }
+        public virtual Coin Currency { get; set; }
     }
 }
