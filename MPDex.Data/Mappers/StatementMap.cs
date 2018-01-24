@@ -28,43 +28,26 @@ namespace MPDex.Data.Mappers
                 n.HasOne(s => s.Fee)
                  .WithMany(f => f.Statements)
                  .OnDelete(DeleteBehavior.Restrict);
-
+                
                 n.Property(s => s.BeforeAmount)
                  .IsRequired()
-                 .HasColumnType("decimal(20, 8)");
+                 .HasColumnType("decimal(28, 8)");
 
                 n.Property(s => s.AfterAmount)
                  .IsRequired()
-                 .HasColumnType("decimal(20, 8)");
+                 .HasColumnType("decimal(28, 8)");
 
                 n.Property(s => s.BalanceAmount)
                  .IsRequired()
-                 .HasColumnType("decimal(20, 8)");
+                 .HasColumnType("decimal(28, 8)");
 
                 n.Property(s => s.FeeAmount)
                  .IsRequired()
-                 .HasColumnType("decimal(20, 8)");
-
-                n.Property(s => s.VerifyKey)
-                 .IsRequired()
-                 .IsUnicode(false)
-                 .HasMaxLength(64);
+                 .HasColumnType("decimal(28, 8)");
 
                 n.Property(f => f.OnCreated)
                  .HasDefaultValueSql("getdate()");
-
-                n.Property(f => f.OnUpdated)
-                 .ValueGeneratedOnUpdate();
-
-                n.Property(b => b.IPAddress)
-                 .IsUnicode(false)
-                 .HasMaxLength(36)
-                 .IsRequired();
-
-                n.Property(b => b.RowVersion)
-                 .IsRequired()
-                 .IsRowVersion();
-
+                
             });
         }
     }

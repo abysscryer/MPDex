@@ -10,6 +10,8 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace MPDex.Services
 {
@@ -26,8 +28,8 @@ namespace MPDex.Services
         private readonly IRepository<Balance> balanceRepository;
         private readonly IRepository<Fee> feeRepository;
 
-        private int buy = (int)BookType.Buy;
-        private int sell = (int)BookType.Sell;
+        private int buy = ((int)BookType.Buy)-1;
+        private int sell = ((int)BookType.Sell)-1;
         private int outgo = (int)BalanceType.Outgo;
         private int income = (int)BalanceType.Income;
 
@@ -99,14 +101,15 @@ namespace MPDex.Services
         {
             try
             {
-                repository.Context.Database.BeginTransaction();
-
                 if (buyBook != null && buyBook.Stock != 0)
                 {
                     // 판매물품 조회
                     var sellBook = await this.GetSellAsync(buyBook);
                     if (sellBook == null)
                         return buyBook;
+
+                    // 트랜잭션 시작
+                    repository.Context.Database.BeginTransaction();
 
                     // 예약 설정
                     var books = new Book[2];
@@ -118,11 +121,11 @@ namespace MPDex.Services
 
                     // 트레이드 생성
                     if (trade == null)
-                        trade = await CreateTrade(books);
+                        trade = await CreateTrade(books[buy]);
 
                     // 계약 체결
                     //trade.Contracts = new List<Contract>();
-                    Contract contract = await CreateContract(trade.Id, books);
+                    Contract contract = await CreateContract(trade, books);
 
                     //trade.Contracts.Add(contract);
                     // 잔고 변경
@@ -130,15 +133,16 @@ namespace MPDex.Services
 
                     // 예약 재고 계산 및 진행 처리
                     await UpdateBooks(books, contract);
-                    
+
+                    // 트랜잭션 커밋
+                    repository.Context.Database.CommitTransaction();
+
+                    return await BuyAsync(buyBook, trade);
                 }
-
-                repository.Context.Database.CommitTransaction();
-
-                return await BuyAsync(buyBook, trade);
             }
             catch (Exception ex)
             {
+                // 트랜잭션 롤백
                 repository.Context.Database.RollbackTransaction();
                 logger.LogError(ex, ex.Message, trade);
                 throw;
@@ -157,14 +161,15 @@ namespace MPDex.Services
         {
             try
             {
-                repository.Context.Database.BeginTransaction();
-
                 if (sellBook != null && sellBook.Stock != 0)
                 {
                     // 판매물품 조회
                     var buyBook = await this.GetBuyAsync(sellBook);
                     if (buyBook == null)
-                        return buyBook;
+                        return sellBook;
+
+                    // 트랜잭션 시작
+                    repository.Context.Database.BeginTransaction();
 
                     // 예약 설정
                     var books = new Book[2];
@@ -176,26 +181,27 @@ namespace MPDex.Services
 
                     // 트레이드 생성
                     if (trade == null)
-                        trade = await CreateTrade(books);
+                        trade = await CreateTrade(books[sell]);
 
                     // 계약 체결
                     //trade.Contracts = new List<Contract>();
-                    Contract contract = await CreateContract(trade.Id, books);
+                    Contract contract = await CreateContract(trade, books);
 
                     //trade.Contracts.Add(contract);
                     await UpdateBalances(contract);
 
                     // 예약 잔고 계산 및 진행
                     await UpdateBooks(books, contract);
-                    
+                
+                    // 트랜잭션 커밋
+                    repository.Context.Database.CommitTransaction();
+
+                    return await SellAsync(sellBook, trade);
                 }
-
-                repository.Context.Database.CommitTransaction();
-
-                return await SellAsync(sellBook, trade);
             }
             catch (Exception ex)
             {
+                // 트랜잭션 롤백
                 repository.Context.Database.RollbackTransaction();
                 logger.LogError(ex, ex.Message, trade);
                 throw;
@@ -215,6 +221,7 @@ namespace MPDex.Services
                 predicate: x => x.BookStatus == BookStatus.Placed
                              && x.BookType == BookType.Buy
                              && x.CoinId == book.CoinId
+                             && x.CurrencyId == book.CurrencyId
                              && x.Price >= book.Price,
                 orderBy: x => x.OrderByDescending(b => b.Price)
                                .OrderBy(b => b.OnCreated)
@@ -232,6 +239,7 @@ namespace MPDex.Services
                 predicate: x => x.BookStatus == BookStatus.Placed
                              && x.BookType == BookType.Sell
                              && x.CoinId == book.CoinId
+                             && x.CurrencyId == book.CurrencyId
                              && x.Price <= book.Price,
                 orderBy: x => x.OrderBy(b => b.Price)
                                .OrderBy(b => b.OnCreated)
@@ -260,22 +268,22 @@ namespace MPDex.Services
         /// </summary>
         /// <param name="books"></param>
         /// <returns></returns>
-        private async Task<Trade> CreateTrade(Book[] books)
+        private async Task<Trade> CreateTrade(Book book)
         {
             Trade trade = new Trade()
             {
-                CustomerId = books[buy].CustomerId,
-                CoinId = books[buy].CoinId,
-                CurrencyId = books[buy].CurrencyId,
-                TradeType = (TradeType)books[buy].BookType,
-                Price = books[buy].Price,
-                Amount = books[buy].Stock,
+                CustomerId = book.CustomerId,
+                CoinId = book.CoinId,
+                CurrencyId = book.CurrencyId,
+                TradeType = (TradeType)book.BookType,
+                Price = book.Price,
+                Amount = book.Stock,
             };
 
             tradeRepository.Add(trade);
             var effected = await unitOfWork.SaveChangesAsync();
             if (effected != 1)
-                throw new Exception($"Create Trade by Book[{ books[buy].Id }, { books[sell].Id }] failed.");
+                throw new Exception($"Create Trade by Book[{ book.Id }, { book.Id }] failed.");
             return trade;
         }
 
@@ -285,20 +293,24 @@ namespace MPDex.Services
         /// <param name="tradeId"></param>
         /// <param name="books"></param>
         /// <returns></returns>
-        private async Task<Contract> CreateContract(Guid tradeId, Book[] books)
+        private async Task<Contract> CreateContract(Trade trade, Book[] books)
         {
             var contract = new Contract();
             {
-                contract.TradeId = tradeId;
+                contract.TradeId = trade.Id;
 
                 // 계약 수량
-                contract.Amount = books[buy].Stock >= books[sell].Stock ?
+                contract.Amount = books[sell].Stock >= books[buy].Stock ?
                     books[buy].Stock : books[sell].Stock;
 
                 // 계약 가격
-                contract.Price = books[buy].Price <= books[sell].Price ?
-                    books[buy].Price : books[sell].Price;
-                
+                if(trade.TradeType == TradeType.Buy)
+                    contract.Price = books[buy].Price >= books[sell].Price ?
+                        books[sell].Price : books[buy].Price;
+                else
+                    contract.Price = books[buy].Price >= books[sell].Price ?
+                        books[buy].Price : books[sell].Price;
+
                 contract.Orders = new List<Order>();
                 contract.Orders.Add(new Order(books[buy]));
                 contract.Orders.Add(new Order(books[sell]));
@@ -334,8 +346,8 @@ namespace MPDex.Services
                 {
                     balanceAmount *= -1;
 
-                    if (balance?.Amount < balanceAmount)
-                        throw new Exception($"Balance[{ order.CustomerId }, { order.CurrencyId }].Amount[{ balance?.Amount }] - Order[{order.Id}].Price[{contract.Price}] update failed");
+                    if (balance?.Amount + balanceAmount < 0)
+                        throw new Exception($"Balance[{ order.CustomerId }, { order.CurrencyId }].Amount[{ balance?.Amount }] - Order[{order.Id}].Price[{contract.Amount}] update failed");
                 }
             }
             else
@@ -347,7 +359,7 @@ namespace MPDex.Services
                 {
                     balanceAmount *= -1;
 
-                    if (balance?.Amount < balanceAmount)
+                    if (balance?.Amount + balanceAmount < 0)
                         throw new Exception($"Balance[{ order.CustomerId }, { order.CoinId }].Amount[{ balance?.Amount }] - Order[{order.Id}].Amount[{contract.Amount}] update failed");
                 }
             }
@@ -355,16 +367,17 @@ namespace MPDex.Services
             balance.Amount += balanceAmount; 
             balance.Statements = new List<Statement>();
 
-            // 구매자의 지출 내역
+            var fee = await feeRepository.Get(predicate: x => x.CoinId == order.CoinId).SingleOrDefaultAsync();
+
             balance.Statements.Add(new Statement
             {
                 StatementId = order.Id,
                 StatementType = (StatementType)bookType,
                 BalanceType = Convert.ToBoolean(balanceType),
-                BalanceAmount = contract.Price,
+                BalanceAmount = contract.Amount,
                 BeforeAmount = balance.Amount,
-                AfterAmount = balance.Amount + balanceAmount
-                // fee
+                AfterAmount = balance.Amount + balanceAmount,
+                FeeId = fee.Id
             });
 
             return balance;
@@ -379,22 +392,28 @@ namespace MPDex.Services
         {
             var orders = new Order[2];
             orders[buy] = contract.Orders.FirstOrDefault();
-            orders[sell] = contract.Orders.LastOrDefault();;
+            orders[sell] = contract.Orders.LastOrDefault();
 
             var balances = new Balance[2, 2];
             balances[buy, outgo] = await CreateBalance(contract, orders[buy], buy, outgo);
-            balances[sell, outgo] = await CreateBalance(contract, orders[sell], sell, outgo);
-            balances[buy, income] = await CreateBalance(contract, orders[buy], buy, income);
-            balances[sell, income] = await CreateBalance(contract, orders[sell], sell, income);
-
             balanceRepository.Update(balances[buy, outgo]);
-            balanceRepository.Update(balances[sell, outgo]);
-            balanceRepository.Update(balances[buy, income]);
-            balanceRepository.Update(balances[sell, income]);
+            await unitOfWork.SaveChangesAsync();
 
-            var effected = await unitOfWork.SaveChangesAsync();
-            if (effected <= 0)
-                throw new Exception($"Contract[{ contract.Id }].Orders.Customer.Balances, update failed");
+            balances[sell, outgo] = await CreateBalance(contract, orders[sell], sell, outgo);
+            balanceRepository.Update(balances[sell, outgo]);
+            await unitOfWork.SaveChangesAsync();
+
+            balances[buy, income] = await CreateBalance(contract, orders[buy], buy, income);
+            balanceRepository.Update(balances[buy, income]);
+            await unitOfWork.SaveChangesAsync();
+
+            balances[sell, income] = await CreateBalance(contract, orders[sell], sell, income);
+            balanceRepository.Update(balances[sell, income]);
+            await unitOfWork.SaveChangesAsync();
+
+            //var effected = await unitOfWork.SaveChangesAsync();
+            //if (effected <= 0)
+            //    throw new Exception($"Contract[{ contract.Id }].Orders.Customer.Balances, update failed");
         }
         
         /// <summary>
@@ -415,6 +434,10 @@ namespace MPDex.Services
                 BookStatus.Placed : BookStatus.Completed;
             books[sell].BookStatus = books[sell].Stock > 0 ?
                 BookStatus.Placed : BookStatus.Completed;
+
+            // 주문 카운트 증가
+            books[buy].OrderCount += 1;
+            books[sell].OrderCount += 1;
 
             repository.Update(books);
             var effected = await unitOfWork.SaveChangesAsync();

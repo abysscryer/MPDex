@@ -12,8 +12,8 @@ using System;
 namespace MPDex.Data.Migrations
 {
     [DbContext(typeof(MPDexContext))]
-    [Migration("20180123025642_initial created")]
-    partial class initialcreated
+    [Migration("20180124062352_Initial Created")]
+    partial class InitialCreated
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -189,7 +189,7 @@ namespace MPDex.Data.Migrations
 
                     b.Property<decimal>("Amount")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("decimal(20, 8)")
+                        .HasColumnType("decimal(28, 8)")
                         .HasDefaultValue(0m);
 
                     b.HasKey("CustomerId", "CoinId");
@@ -205,7 +205,7 @@ namespace MPDex.Data.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(20, 8)");
+                        .HasColumnType("decimal(28, 8)");
 
                     b.Property<byte>("BookStatus")
                         .ValueGeneratedOnAdd()
@@ -236,7 +236,7 @@ namespace MPDex.Data.Migrations
                         .HasDefaultValue((byte)0);
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("decimal(20, 8)");
+                        .HasColumnType("decimal(28, 8)");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
@@ -244,7 +244,7 @@ namespace MPDex.Data.Migrations
                         .ValueGeneratedOnAddOrUpdate();
 
                     b.Property<decimal>("Stock")
-                        .HasColumnType("decimal(20, 8)");
+                        .HasColumnType("decimal(28, 8)");
 
                     b.HasKey("Id");
 
@@ -281,10 +281,10 @@ namespace MPDex.Data.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(20, 8)");
+                        .HasColumnType("decimal(28, 8)");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("decimal(20, 8)");
+                        .HasColumnType("decimal(28, 8)");
 
                     b.Property<Guid>("TradeId");
 
@@ -341,7 +341,7 @@ namespace MPDex.Data.Migrations
                         .HasDefaultValueSql("getdate()");
 
                     b.Property<decimal>("Percent")
-                        .HasColumnType("decimal(3, 3)");
+                        .HasColumnType("decimal(28, 8)");
 
                     b.HasKey("Id");
 
@@ -356,7 +356,7 @@ namespace MPDex.Data.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(20, 8)");
+                        .HasColumnType("decimal(28, 8)");
 
                     b.Property<Guid>("BookId");
 
@@ -381,10 +381,10 @@ namespace MPDex.Data.Migrations
                     b.Property<byte>("OrderType");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("decimal(20, 8)");
+                        .HasColumnType("decimal(28, 8)");
 
                     b.Property<decimal>("Stock")
-                        .HasColumnType("decimal(20, 8)");
+                        .HasColumnType("decimal(28, 8)");
 
                     b.HasKey("Id");
 
@@ -405,50 +405,32 @@ namespace MPDex.Data.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<decimal>("AfterAmount")
-                        .HasColumnType("decimal(20, 8)");
+                        .HasColumnType("decimal(28, 8)");
 
                     b.Property<decimal>("BalanceAmount")
-                        .HasColumnType("decimal(20, 8)");
+                        .HasColumnType("decimal(28, 8)");
 
                     b.Property<bool>("BalanceType");
 
                     b.Property<decimal>("BeforeAmount")
-                        .HasColumnType("decimal(20, 8)");
+                        .HasColumnType("decimal(28, 8)");
 
                     b.Property<short>("CoinId");
 
                     b.Property<Guid>("CustomerId");
 
                     b.Property<decimal>("FeeAmount")
-                        .HasColumnType("decimal(20, 8)");
+                        .HasColumnType("decimal(28, 8)");
 
-                    b.Property<short>("FeeId");
-
-                    b.Property<string>("IPAddress")
-                        .IsRequired()
-                        .HasMaxLength(36)
-                        .IsUnicode(false);
+                    b.Property<short?>("FeeId");
 
                     b.Property<DateTime>("OnCreated")
                         .ValueGeneratedOnAdd()
                         .HasDefaultValueSql("getdate()");
 
-                    b.Property<DateTime?>("OnUpdated")
-                        .ValueGeneratedOnUpdate();
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate();
-
                     b.Property<Guid>("StatementId");
 
                     b.Property<byte>("StatementType");
-
-                    b.Property<string>("VerifyKey")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .IsUnicode(false);
 
                     b.HasKey("Id");
 
@@ -467,7 +449,7 @@ namespace MPDex.Data.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(20, 8)");
+                        .HasColumnType("decimal(28, 8)");
 
                     b.Property<short>("CoinId");
 
@@ -480,7 +462,7 @@ namespace MPDex.Data.Migrations
                         .HasDefaultValueSql("getdate()");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("decimal(20, 8)");
+                        .HasColumnType("decimal(28, 8)");
 
                     b.Property<byte>("TradeType");
 

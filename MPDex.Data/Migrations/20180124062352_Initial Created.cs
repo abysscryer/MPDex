@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace MPDex.Data.Migrations
 {
-    public partial class initialcreated : Migration
+    public partial class InitialCreated : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -191,7 +191,7 @@ namespace MPDex.Data.Migrations
                     Id = table.Column<short>(nullable: false),
                     CoinId = table.Column<short>(nullable: false),
                     OnCreated = table.Column<DateTime>(nullable: false, defaultValueSql: "getdate()"),
-                    Percent = table.Column<decimal>(type: "decimal(3, 3)", nullable: false)
+                    Percent = table.Column<decimal>(type: "decimal(28, 8)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -210,7 +210,7 @@ namespace MPDex.Data.Migrations
                 {
                     CustomerId = table.Column<Guid>(nullable: false),
                     CoinId = table.Column<short>(nullable: false),
-                    Amount = table.Column<decimal>(type: "decimal(20, 8)", nullable: false, defaultValue: 0m)
+                    Amount = table.Column<decimal>(type: "decimal(28, 8)", nullable: false, defaultValue: 0m)
                 },
                 constraints: table =>
                 {
@@ -234,7 +234,7 @@ namespace MPDex.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
-                    Amount = table.Column<decimal>(type: "decimal(20, 8)", nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(28, 8)", nullable: false),
                     BookStatus = table.Column<byte>(nullable: false, defaultValue: (byte)1),
                     BookType = table.Column<byte>(nullable: false),
                     CoinId = table.Column<short>(nullable: false),
@@ -244,9 +244,9 @@ namespace MPDex.Data.Migrations
                     OnCreated = table.Column<DateTime>(nullable: false, defaultValueSql: "getdate()"),
                     OnUpdated = table.Column<DateTime>(nullable: true),
                     OrderCount = table.Column<byte>(nullable: false, defaultValue: (byte)0),
-                    Price = table.Column<decimal>(type: "decimal(20, 8)", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(28, 8)", nullable: false),
                     RowVersion = table.Column<byte[]>(rowVersion: true, nullable: false),
-                    Stock = table.Column<decimal>(type: "decimal(20, 8)", nullable: false)
+                    Stock = table.Column<decimal>(type: "decimal(28, 8)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -276,12 +276,12 @@ namespace MPDex.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
-                    Amount = table.Column<decimal>(type: "decimal(20, 8)", nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(28, 8)", nullable: false),
                     CoinId = table.Column<short>(nullable: false),
                     CurrencyId = table.Column<short>(nullable: false),
                     CustomerId = table.Column<Guid>(nullable: false),
                     OnCreated = table.Column<DateTime>(nullable: false, defaultValueSql: "getdate()"),
-                    Price = table.Column<decimal>(type: "decimal(20, 8)", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(28, 8)", nullable: false),
                     TradeType = table.Column<byte>(nullable: false)
                 },
                 constraints: table =>
@@ -312,21 +312,17 @@ namespace MPDex.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
-                    AfterAmount = table.Column<decimal>(type: "decimal(20, 8)", nullable: false),
-                    BalanceAmount = table.Column<decimal>(type: "decimal(20, 8)", nullable: false),
+                    AfterAmount = table.Column<decimal>(type: "decimal(28, 8)", nullable: false),
+                    BalanceAmount = table.Column<decimal>(type: "decimal(28, 8)", nullable: false),
                     BalanceType = table.Column<bool>(nullable: false),
-                    BeforeAmount = table.Column<decimal>(type: "decimal(20, 8)", nullable: false),
+                    BeforeAmount = table.Column<decimal>(type: "decimal(28, 8)", nullable: false),
                     CoinId = table.Column<short>(nullable: false),
                     CustomerId = table.Column<Guid>(nullable: false),
-                    FeeAmount = table.Column<decimal>(type: "decimal(20, 8)", nullable: false),
-                    FeeId = table.Column<short>(nullable: false),
-                    IPAddress = table.Column<string>(unicode: false, maxLength: 36, nullable: false),
+                    FeeAmount = table.Column<decimal>(type: "decimal(28, 8)", nullable: false),
+                    FeeId = table.Column<short>(nullable: true),
                     OnCreated = table.Column<DateTime>(nullable: false, defaultValueSql: "getdate()"),
-                    OnUpdated = table.Column<DateTime>(nullable: true),
-                    RowVersion = table.Column<byte[]>(rowVersion: true, nullable: false),
                     StatementId = table.Column<Guid>(nullable: false),
-                    StatementType = table.Column<byte>(nullable: false),
-                    VerifyKey = table.Column<string>(unicode: false, maxLength: 64, nullable: false)
+                    StatementType = table.Column<byte>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -362,8 +358,8 @@ namespace MPDex.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
-                    Amount = table.Column<decimal>(type: "decimal(20, 8)", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(20, 8)", nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(28, 8)", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(28, 8)", nullable: false),
                     TradeId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
@@ -382,7 +378,7 @@ namespace MPDex.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
-                    Amount = table.Column<decimal>(type: "decimal(20, 8)", nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(28, 8)", nullable: false),
                     BookId = table.Column<Guid>(nullable: false),
                     CoinId = table.Column<short>(nullable: false),
                     ContractId = table.Column<Guid>(nullable: false),
@@ -392,8 +388,8 @@ namespace MPDex.Data.Migrations
                     OrderCount = table.Column<byte>(nullable: false, defaultValue: (byte)0),
                     OrderStatus = table.Column<byte>(nullable: false),
                     OrderType = table.Column<byte>(nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(20, 8)", nullable: false),
-                    Stock = table.Column<decimal>(type: "decimal(20, 8)", nullable: false)
+                    Price = table.Column<decimal>(type: "decimal(28, 8)", nullable: false),
+                    Stock = table.Column<decimal>(type: "decimal(28, 8)", nullable: false)
                 },
                 constraints: table =>
                 {

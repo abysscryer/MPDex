@@ -91,6 +91,15 @@ namespace MPDex.Web.Frontend
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
+            {
+                if (!serviceScope.ServiceProvider.GetService<MPDexContext>().AllMigrationsApplied())
+                {
+                    serviceScope.ServiceProvider.GetService<MPDexContext>().Database.Migrate();
+                    serviceScope.ServiceProvider.GetService<MPDexContext>().EnsureSeeded();
+                }
+            }
         }
 
         public static readonly LoggerFactory MyLoggerFactory

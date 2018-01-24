@@ -10,10 +10,7 @@ namespace MPDex.Models.ViewModels
 
         [Required]
         public BookType BookType { get; set; }
-
-        [Required]
-        public BookStatus BookStatus { get; set; }
-
+        
         [Range(0.0000001, double.MaxValue)]
         public decimal Price { get; set; }
 
@@ -52,7 +49,6 @@ namespace MPDex.Models.ViewModels
 
     public class BookStatusModel
     {
-        [Range(1, 4)]
         public BookStatus bookStatus { get; set; }
 
         [Required]
@@ -80,6 +76,8 @@ namespace MPDex.Models.ViewModels
         public string NickName { get; set; }
 
         public short CoinId { get; set; }
+
+        public short CurrencyId { get; set; }
 
         public string CoinName { get; set; }
 

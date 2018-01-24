@@ -21,7 +21,7 @@ namespace MPDex.Data.Mappers
 
                 n.Property(f => f.Percent)
                  .IsRequired()
-                 .HasColumnType("decimal(3, 3)");
+                 .HasColumnType("decimal(28, 8)");
 
                 n.Property(f => f.OnCreated)
                  .HasDefaultValueSql("getdate()");

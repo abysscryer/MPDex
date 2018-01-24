@@ -18,11 +18,11 @@ namespace MPDex.Data.Mappers
                 
                 n.Property(c => c.Price)
                  .IsRequired()
-                 .HasColumnType("decimal(20, 8)");
+                 .HasColumnType("decimal(28, 8)");
 
                 n.Property(c => c.Amount)
                  .IsRequired()
-                 .HasColumnType("decimal(20, 8)");
+                 .HasColumnType("decimal(28, 8)");
             });
 
         }

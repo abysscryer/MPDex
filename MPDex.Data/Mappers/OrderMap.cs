@@ -31,15 +31,15 @@ namespace MPDex.Data.Mappers
 
                 n.Property(o => o.Price)
                  .IsRequired()
-                 .HasColumnType("decimal(20, 8)");
+                 .HasColumnType("decimal(28, 8)");
 
                 n.Property(o => o.Amount)
                  .IsRequired()
-                 .HasColumnType("decimal(20, 8)");
+                 .HasColumnType("decimal(28, 8)");
 
                 n.Property(o => o.Stock)
                  .IsRequired()
-                 .HasColumnType("decimal(20, 8)");
+                 .HasColumnType("decimal(28, 8)");
 
                 n.Property(f => f.OnCreated)
                  .HasDefaultValueSql("getdate()");

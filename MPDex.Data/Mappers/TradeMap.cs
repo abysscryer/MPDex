@@ -23,11 +23,11 @@ namespace MPDex.Data.Mappers
                 
                 n.Property(b => b.Price)
                  .IsRequired()
-                 .HasColumnType("decimal(20, 8)");
+                 .HasColumnType("decimal(28, 8)");
 
                 n.Property(b => b.Amount)
                  .IsRequired()
-                 .HasColumnType("decimal(20, 8)");
+                 .HasColumnType("decimal(28, 8)");
 
                 n.Property(f => f.OnCreated)
                  .HasDefaultValueSql("getdate()");

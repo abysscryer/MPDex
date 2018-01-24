@@ -24,7 +24,7 @@ namespace MPDex.Data.Mappers
 
                 n.Property(b => b.Amount)
                  .IsRequired()
-                 .HasColumnType("decimal(20, 8)")
+                 .HasColumnType("decimal(28, 8)")
                  .HasDefaultValue(0);
             });
         }
