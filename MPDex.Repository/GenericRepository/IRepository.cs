@@ -47,5 +47,7 @@ namespace MPDex.Repository
         void Remove(EM em);
 
         void Remove(IEnumerable<EM> em);
+
+        IQueryable<EM> FromSql(string sql, params object[] parameters);
     }
 }

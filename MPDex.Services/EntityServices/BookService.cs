@@ -7,17 +7,19 @@ using MPDex.Models.Domain;
 using MPDex.Models.ViewModels;
 using MPDex.Repository;
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace MPDex.Services
 {
     public interface IBookService : IService<Book>
     {
+        Task<IEnumerable<BookSummaryModel>> SumAsync(short currencyId, short coinId, BookType bookType);
+
         Task<BookViewModel> AddAsync(BookCreateModel cm);
+        Task<IPagedList<BookViewModel>> GetPagedListAsync(int pageIndex, int pageSize, int indexFrom, int itemCount);
     }
 
     public class BookService : Service<Book>, IBookService
@@ -28,13 +30,13 @@ namespace MPDex.Services
         private readonly IRepository<Balance> balanceRepository;
         private readonly IRepository<Fee> feeRepository;
 
-        private int buy = ((int)BookType.Buy)-1;
-        private int sell = ((int)BookType.Sell)-1;
+        private int buy = ((int)BookType.Buy) - 1;
+        private int sell = ((int)BookType.Sell) - 1;
         private int outgo = (int)BalanceType.Outgo;
         private int income = (int)BalanceType.Income;
 
-        public BookService(IUnitOfWork unitOfWork, 
-                           ILogger<Service<Book>> logger, 
+        public BookService(IUnitOfWork unitOfWork,
+                           ILogger<Service<Book>> logger,
                            IHttpContextAccessor httpContextAccessor)
             : base(unitOfWork, logger)
         {
@@ -43,6 +45,84 @@ namespace MPDex.Services
             this.contractRepository = unitOfWork.GetRepository<Contract>();
             this.balanceRepository = unitOfWork.GetRepository<Balance>();
             this.feeRepository = unitOfWork.GetRepository<Fee>();
+        }
+
+        public async Task<IPagedList<BookViewModel>> GetPagedListAsync(int pageIndex, int pageSize, int indexFrom, int itemCount)
+        {
+            return await base.GetPagedListAsync(x => new BookViewModel
+            {
+                Id = x.Id,
+                CustomerId = x.Customer.Id,
+                NickName = x.Customer.NickName,
+                CoinId = x.Coin.Id,
+                CoinName = x.Coin.Name,
+                CurrencyId = x.CurrencyId,
+                CurrencyName = x.Currency.Name,
+                BookType = x.BookType,
+                BookStatus = x.BookStatus,
+                Price = x.Price,
+                Amount = x.Amount,
+                Stock = x.Stock,
+                OrderCount = x.OrderCount,
+                OnCreated = x.OnCreated,
+                OnUpdated = x.OnUpdated,
+                IPAddress = x.IPAddress,
+                RowVersion = x.RowVersion
+            }, pageIndex: pageIndex, pageSize: pageSize, indexFrom: indexFrom, itemCount: itemCount);
+        }
+        
+        public async Task<IEnumerable<BookSummaryModel>> SumAsync(short currencyId, short coinId, BookType bookType)
+        {
+
+            IQueryable<Book> books = this.repository.Entitis.AsNoTracking();
+
+            var query = books.Where(x => x.CoinId == 2
+                && x.CurrencyId == 1
+                && x.BookType == bookType
+                && x.BookStatus == BookStatus.Placed)
+            .GroupBy(x => new
+            {
+                x.Price,
+                x.CoinId,
+                x.CurrencyId
+            })
+            .Select(x => new BookSummaryModel
+            {
+                CurrencyName = x.FirstOrDefault().Currency.Name,
+                CoinName = x.FirstOrDefault().Coin.Name,
+                Price = x.Key.Price,
+                Amount = x.Sum(s => s.Stock),
+                Count = x.Count()
+            });
+
+            if (bookType == BookType.Buy)
+                return await query.OrderBy(x => x.Price).ToListAsync();
+            else
+                return await query.OrderByDescending(x => x.Price).ToListAsync();
+
+            #region FromSql
+
+            //            var query = @"
+            //SELECT Price, SUM(Stock) AS [Amount], COUNT(*) AS [Count]
+            //	, (SELECT [Name] FROM dbo.Coin WHERE Id = {0}) AS [CurrencyName] 
+            //	, (SELECT [Name] FROM dbo.Coin WHERE Id = {1}) AS [CoinName] 
+            //FROM dbo.Book
+            //WHERE CurrencyId = {0}
+            //	AND CoinId = {1}
+            //	AND BookType = {2}
+            //	AND BookStatus = {3}
+            //GROUP BY Price";
+
+
+            //            var result = await repository.FromSql(query, currencyId, coinId, bookType, 1)
+            //                .ToListAsync();
+
+            //            if (bookType == BookType.Sell)
+            //                return result.OrderByDescending(x => x.Price);
+            //            else
+            //                return result;
+
+            #endregion
         }
 
         /// <summary>
@@ -336,49 +416,101 @@ namespace MPDex.Services
         {
             Balance balance;
             decimal balanceAmount = 0;
+
+            var fee = await feeRepository.Get(predicate: x => x.CoinId == order.CoinId).SingleOrDefaultAsync();
+            decimal feeAmount = 0;
             
             if (bookType == buy)
             {
-                balance = await balanceRepository.FindAsync(order.CustomerId, order.CurrencyId);
                 balanceAmount = contract.Price;
 
                 if (balanceType == outgo)
                 {
+                    // 구매로 인한 지출 발생은 통화
+                    balance = await balanceRepository.FindAsync(order.CustomerId, order.CurrencyId);
+
+                    // 구매자의 지출은 가격
+                    balanceAmount = contract.Price;
+
+                    // 지출 처리
                     balanceAmount *= -1;
 
+                    // 지출이 보유량 보다 많은 경우 논리오류
                     if (balance?.Amount + balanceAmount < 0)
                         throw new Exception($"Balance[{ order.CustomerId }, { order.CurrencyId }].Amount[{ balance?.Amount }] - Order[{order.Id}].Price[{contract.Amount}] update failed");
+                }
+                else
+                {
+                    // 구매로 인한 수입 발생은 코인
+                    balance = await balanceRepository.FindAsync(order.CustomerId, order.CoinId);
+
+                    // 구매자의 수입은 수량
+                    balanceAmount = contract.Amount;
+
+                    // 수수료 계산
+                    feeAmount = (fee.Percent * balanceAmount) / 100;
+
+                    // 수수료 차감
+                    balanceAmount -= feeAmount;
                 }
             }
             else
             {
-                balance = await balanceRepository.FindAsync(order.CustomerId, order.CoinId);
-                balanceAmount = contract.Amount;
+                
+                
 
                 if (balanceType == outgo)
                 {
+                    // 판매로 인한 지출 발생은 코인
+                    balance = await balanceRepository.FindAsync(order.CustomerId, order.CoinId);
+
+                    // 판매자의 지출은 수량
+                    balanceAmount = contract.Amount;
+
+                    // 지출 처리
                     balanceAmount *= -1;
 
+                    // 지출이 보유량보다 많은 경우 논리오류
                     if (balance?.Amount + balanceAmount < 0)
                         throw new Exception($"Balance[{ order.CustomerId }, { order.CoinId }].Amount[{ balance?.Amount }] - Order[{order.Id}].Amount[{contract.Amount}] update failed");
+                }
+                else
+                {
+                    // 판매로 인한 수입 발생은 통화
+                    balance = await balanceRepository.FindAsync(order.CustomerId, order.CurrencyId);
+
+                    // 판매자의 수입은 가격
+                    balanceAmount = contract.Price;
+
+                    // 수수료 계산
+                    feeAmount = (fee.Percent * balanceAmount) / 100;
+
+                    // 수수료 차감
+                    balanceAmount -= feeAmount;
                 }
             }
             
             balance.Amount += balanceAmount; 
             balance.Statements = new List<Statement>();
 
-            var fee = await feeRepository.Get(predicate: x => x.CoinId == order.CoinId).SingleOrDefaultAsync();
-
-            balance.Statements.Add(new Statement
+            var statement = new Statement
             {
                 StatementId = order.Id,
                 StatementType = (StatementType)bookType,
                 BalanceType = Convert.ToBoolean(balanceType),
-                BalanceAmount = contract.Amount,
+                BalanceAmount = balanceAmount,
                 BeforeAmount = balance.Amount,
                 AfterAmount = balance.Amount + balanceAmount,
-                FeeId = fee.Id
-            });
+                FeeAmount = feeAmount,
+                CustomerId = order.CustomerId,
+                CoinId = balance.CoinId
+            };
+
+            // 수입에는 연관 수수료 지정
+            if ((BalanceType)balanceType == BalanceType.Income)
+                statement.FeeId = fee.Id;
+            
+            balance.Statements.Add(statement);
 
             return balance;
         }
@@ -397,23 +529,19 @@ namespace MPDex.Services
             var balances = new Balance[2, 2];
             balances[buy, outgo] = await CreateBalance(contract, orders[buy], buy, outgo);
             balanceRepository.Update(balances[buy, outgo]);
-            await unitOfWork.SaveChangesAsync();
-
+            
             balances[sell, outgo] = await CreateBalance(contract, orders[sell], sell, outgo);
             balanceRepository.Update(balances[sell, outgo]);
-            await unitOfWork.SaveChangesAsync();
-
+            
             balances[buy, income] = await CreateBalance(contract, orders[buy], buy, income);
             balanceRepository.Update(balances[buy, income]);
-            await unitOfWork.SaveChangesAsync();
-
+            
             balances[sell, income] = await CreateBalance(contract, orders[sell], sell, income);
             balanceRepository.Update(balances[sell, income]);
-            await unitOfWork.SaveChangesAsync();
-
-            //var effected = await unitOfWork.SaveChangesAsync();
-            //if (effected <= 0)
-            //    throw new Exception($"Contract[{ contract.Id }].Orders.Customer.Balances, update failed");
+            
+            var effected = await unitOfWork.SaveChangesAsync();
+            if (effected <= 0)
+                throw new Exception($"Contract[{ contract.Id }].Orders.Customer.Balances, update failed");
         }
         
         /// <summary>
@@ -444,5 +572,6 @@ namespace MPDex.Services
             if (effected != 2)
                 throw new Exception($"Book[{ books[buy].Id }, { books[sell].Id }].BookStatus[{ BookStatus.Placed }] change failed");
         }
+        
     }
 }

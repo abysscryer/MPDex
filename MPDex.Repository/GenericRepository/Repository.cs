@@ -152,7 +152,7 @@ namespace MPDex.Repository
         /// <param name="sql">The raw SQL.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>An <see cref="IQueryable{TEntity}" /> that contains elements that satisfy the condition specified by raw SQL.</returns>
-        //public IQueryable<EM> FromSql(string sql, params object[] parameters) => this.dbSet.FromSql(sql, parameters);
+        public IQueryable<EM> FromSql(string sql, params object[] parameters) => this.dbSet.FromSql(sql, parameters);
 
     }
 }

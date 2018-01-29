@@ -58,6 +58,8 @@ namespace MPDex.Data.Mappers
                 n.Property(b => b.RowVersion)
                  .IsRequired()
                  .IsRowVersion();
+
+                //n.ForSqlServerIsMemoryOptimized();
             });
         }
     }

@@ -81,6 +81,8 @@ namespace MPDex.Models.ViewModels
 
         public string CoinName { get; set; }
 
+        public string CurrencyName { get; set; }
+
         public string IPAddress { get; set; }
 
         public DateTime OnCreated { get; set; }
@@ -89,4 +91,18 @@ namespace MPDex.Models.ViewModels
 
         public byte[] RowVersion { get; set; }
     }
+
+    public class BookSummaryModel
+    {
+        public decimal Price { get; set; }
+
+        public string CoinName { get; set; }
+
+        public string CurrencyName { get; set; }
+
+        public decimal Amount { get; set; }
+
+        public int Count { get; set; }
+    }
+    
 }

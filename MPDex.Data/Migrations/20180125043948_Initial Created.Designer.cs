@@ -12,7 +12,7 @@ using System;
 namespace MPDex.Data.Migrations
 {
     [DbContext(typeof(MPDexContext))]
-    [Migration("20180124062352_Initial Created")]
+    [Migration("20180125043948_Initial Created")]
     partial class InitialCreated
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

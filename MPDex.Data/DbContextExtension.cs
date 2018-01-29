@@ -63,9 +63,7 @@ namespace MPDex.Data
                      .Fill(b => b.CoinId, () => { return (short)((i++ % coins.Count) + 1); })
                      .Fill(b => b.Amount).WithinRange(10, 99)
                      .Fill(b => b.CustomerId, Guid.Empty);
-
-                //var balances = A.ListOf<Balance>(coins.Count);
-
+                
                 A.Configure<Customer>()
                     .Fill(c => c.Email).AsEmailAddressForDomain("mpdex.com")
                     .Fill(c => c.NickName).AsFirstName()
@@ -75,7 +73,7 @@ namespace MPDex.Data
                     .Fill(c => c.Balances, () => { return A.ListOf<Balance>(coins.Count);  });
                     
                 var customers = A.ListOf<Customer>(10);
-                //customers.ForEach(x => { x.Balances = balances; });
+                
                 context.AddRange(customers);
                 context.SaveChanges();
 

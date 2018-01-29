@@ -65,6 +65,11 @@ namespace MPDex.Web.Frontend
 
             // client ip address information
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+            services.AddDistributedRedisCache(options =>
+            {
+                options.Configuration = "localhost:6379";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

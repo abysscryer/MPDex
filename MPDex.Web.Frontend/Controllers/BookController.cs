@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MPDex.Models.Base;
 using MPDex.Models.ViewModels;
 using MPDex.Services;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MPDex.Web.Frontend.Controllers
@@ -21,26 +23,18 @@ namespace MPDex.Web.Frontend.Controllers
         [HttpGet]
         public async Task<IActionResult> Get(int pageIndex = 0, int pageSize = 20, int indexFrom = 0, int itemCount = 0)
         {
-            var page = await this.service.GetPagedListAsync(
-                x => new BookViewModel {
-                    Id = x.Id,
-                    CustomerId = x.Customer.Id,
-                    NickName = x.Customer.NickName,
-                    CoinId = x.Coin.Id,
-                    CoinName = x.Coin.Name,
-                    BookType = x.BookType,
-                    BookStatus = x.BookStatus,
-                    Price = x.Price,
-                    Amount = x.Amount,
-                    Stock = x.Stock,
-                    OrderCount = x.OrderCount,
-                    OnCreated = x.OnCreated,
-                    OnUpdated = x.OnUpdated,
-                    IPAddress = x.IPAddress,
-                    RowVersion = x.RowVersion
-                }, pageIndex: pageIndex, pageSize: pageSize, indexFrom: indexFrom, itemCount: itemCount);
+            var page = await this.service.GetPagedListAsync(pageIndex, pageSize, indexFrom, itemCount);
 
             return Ok(page);
+        }
+
+        [HttpGet]
+        [Route("Summary")]
+        public async Task<IActionResult> Summary(short currencyId = 1, short coinId = 2, BookType bookType =BookType.Buy)
+        {
+            var summary = await this.service.SumAsync(currencyId, coinId, bookType);
+                
+            return Ok(summary);
         }
 
         // GET: api/Book/5
