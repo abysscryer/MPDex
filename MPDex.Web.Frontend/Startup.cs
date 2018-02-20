@@ -8,10 +8,14 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
+using MPDex.CacheRepository;
 using MPDex.Data;
 using MPDex.Repository;
 using MPDex.Services;
+using MPDex.Web.Frontend.Controllers;
+using MPDex.Web.Frontend.Hubs;
 using Newtonsoft.Json.Serialization;
+using StackExchange.Redis;
 
 namespace MPDex.Web.Frontend
 {
@@ -41,6 +45,20 @@ namespace MPDex.Web.Frontend
             // inject unit of work
             services.AddUnitOfWork<MPDexContext>();
 
+            // inject auto mapper
+            services.AddAutoMapper();
+
+            // config redis
+            services.Configure<RedisConfiguration>(Configuration.GetSection("redis"));
+            // inject redis connection
+            services.AddSingleton<IRedisConnectionFactory, RedisConnectionFactory>();
+
+            // client ip address information
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+            // inject bookCache
+            services.AddScoped<IBookCache, BookCache>();
+
             // inject coin service
             services.AddScoped<ICoinService, CoinService>();
 
@@ -50,26 +68,26 @@ namespace MPDex.Web.Frontend
             services.AddScoped<IBookService, BookService>();
 
             services.AddScoped<IFeeService, FeeService>();
-
+            
             // inject email service
             services.AddTransient<IEmailSender, EmailSender>();
+
+            services.AddCors(action => action.AddPolicy("AllowAny", builder =>
+            {
+                builder
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowAnyOrigin();
+            }));
+
+            // inject signalr
+            services.AddSignalR();
 
             // inject mvc with json camel case resolver
             services.AddMvc()
                 .AddJsonOptions(options => {
                     options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                 });
-
-            // inject auto mapper
-            services.AddAutoMapper();
-
-            // client ip address information
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
-            services.AddDistributedRedisCache(options =>
-            {
-                options.Configuration = "localhost:6379";
-            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -90,13 +108,20 @@ namespace MPDex.Web.Frontend
 
             app.UseAuthentication();
 
+            app.UseCors("AllowAny");
+
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<BookHub>("book");
+            });
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
-
+            
             using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
             {
                 if (!serviceScope.ServiceProvider.GetService<MPDexContext>().AllMigrationsApplied())

@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MPDex.Models.Base;
@@ -9,22 +8,20 @@ using MPDex.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace MPDex.Services
 {
     public interface IBookService : IService<Book>
     {
+        event EventHandler<BookChangedEventArgs> BookChanged;
         Task<IEnumerable<BookSummaryModel>> SumAsync(short currencyId, short coinId, BookType bookType);
-
         Task<BookViewModel> AddAsync(BookCreateModel cm);
         Task<IPagedList<BookViewModel>> GetPagedListAsync(int pageIndex, int pageSize, int indexFrom, int itemCount);
     }
 
     public class BookService : Service<Book>, IBookService
     {
-        private readonly IHttpContextAccessor httpContextAccessor;
         private readonly IRepository<Trade> tradeRepository;
         private readonly IRepository<Contract> contractRepository;
         private readonly IRepository<Balance> balanceRepository;
@@ -35,16 +32,28 @@ namespace MPDex.Services
         private int outgo = (int)BalanceType.Outgo;
         private int income = (int)BalanceType.Income;
 
+        public event EventHandler<BookChangedEventArgs> BookChanged;
+
         public BookService(IUnitOfWork unitOfWork,
-                           ILogger<Service<Book>> logger,
-                           IHttpContextAccessor httpContextAccessor)
+            ILogger<Service<Book>> logger)
             : base(unitOfWork, logger)
         {
-            this.httpContextAccessor = httpContextAccessor;
             this.tradeRepository = unitOfWork.GetRepository<Trade>();
             this.contractRepository = unitOfWork.GetRepository<Contract>();
             this.balanceRepository = unitOfWork.GetRepository<Balance>();
             this.feeRepository = unitOfWork.GetRepository<Fee>();
+        }
+
+        /// <summary>
+        /// event call back
+        /// </summary>
+        /// <param name="e"></param>
+        protected virtual void OnBookChanged(BookChangedEventArgs e)
+        {
+            if (BookChanged != null)
+            {
+                BookChanged(this, e);
+            }
         }
 
         public async Task<IPagedList<BookViewModel>> GetPagedListAsync(int pageIndex, int pageSize, int indexFrom, int itemCount)
@@ -88,11 +97,11 @@ namespace MPDex.Services
             })
             .Select(x => new BookSummaryModel
             {
-                CurrencyName = x.FirstOrDefault().Currency.Name,
-                CoinName = x.FirstOrDefault().Coin.Name,
+                BookType = bookType,
+                CurrencyId = x.Key.CurrencyId,
+                CoinId = x.Key.CoinId,
                 Price = x.Key.Price,
                 Amount = x.Sum(s => s.Stock),
-                Count = x.Count()
             });
 
             if (bookType == BookType.Buy)
@@ -134,13 +143,16 @@ namespace MPDex.Services
         {
             try
             {
-                cm.IPAddress = httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
                 cm.Id = Guid.NewGuid();
                 var em = Mapper.Map<Book>(cm);
                 var ok = await base.AddAsync(em);
 
                 if (ok)
+                {
+                    IncreaseBookCache(em);
                     return await OrderAsync(em);
+                }
+                
             }
             catch (Exception ex)
             {
@@ -217,6 +229,8 @@ namespace MPDex.Services
                     // 트랜잭션 커밋
                     repository.Context.Database.CommitTransaction();
 
+                    DecreaseBooksCache(books, contract.Amount);
+                    
                     return await BuyAsync(buyBook, trade);
                 }
             }
@@ -275,6 +289,8 @@ namespace MPDex.Services
                 
                     // 트랜잭션 커밋
                     repository.Context.Database.CommitTransaction();
+
+                    DecreaseBooksCache(books, contract.Amount);
 
                     return await SellAsync(sellBook, trade);
                 }
@@ -572,6 +588,53 @@ namespace MPDex.Services
             if (effected != 2)
                 throw new Exception($"Book[{ books[buy].Id }, { books[sell].Id }].BookStatus[{ BookStatus.Placed }] change failed");
         }
-        
+
+        /// <summary>
+        /// 예약 캐시 증가
+        /// 소켓 호출
+        /// </summary>
+        /// <param name="book"></param>
+        /// <returns></returns>
+        private void IncreaseBookCache(Book book)
+        {
+            try
+            {
+                var cm = Mapper.Map<BookCacheModel>(book);
+                OnBookChanged(new BookChangedEventArgs(cm));
+                //await bookCache.IncreaseAsync(cm);
+            }
+            catch (Exception ex)
+            {
+                // do not throw exception
+                logger.LogError(ex, ex.Message, book);
+            }
+        }
+
+        /// <summary>
+        /// 예약 캐시 감소
+        /// 소켓 호출
+        /// </summary>
+        /// <param name="books"></param>
+        /// <param name="amount"></param>
+        /// <returns></returns>
+        private void DecreaseBooksCache(Book[] books, decimal amount)
+        {
+            try
+            {   var bm = Mapper.Map<BookCacheModel>(books[buy]);
+                bm.Amount = amount;
+                OnBookChanged(new BookChangedEventArgs(bm, false));
+                //await bookCache.DecreaseAsync(bm);
+
+                var sm = Mapper.Map<BookCacheModel>(books[sell]);
+                sm.Amount = amount;
+                OnBookChanged(new BookChangedEventArgs(sm, false));
+                //await bookCache.DecreaseAsync(sm);
+            }
+            catch (Exception ex)
+            {
+                // do not throw exception
+                logger.LogError(ex, ex.Message, books, amount);
+            }
+        }
     }
 }

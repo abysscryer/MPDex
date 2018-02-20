@@ -29,6 +29,16 @@ namespace MPDex.Web.Frontend.Controllers
             return Ok(page);
         }
 
+        [HttpGet]
+        [Route("All")]
+        public async Task<IActionResult> GetAll()
+        {
+            var all = await this.service.Get(
+                x => new { Id = x.Id, Name = x.Name });
+
+            return Ok(all);
+        }
+
         // GET api/<controller>/5
         [HttpGet("{id:int}")]
         public async Task<IActionResult> Get(short id)

@@ -10,7 +10,7 @@ namespace MPDex.Models.ViewModels
 
         [Required]
         public BookType BookType { get; set; }
-        
+
         [Range(0.0000001, double.MaxValue)]
         public decimal Price { get; set; }
 
@@ -19,7 +19,7 @@ namespace MPDex.Models.ViewModels
 
         [Range(0.0000001, double.MaxValue)]
         public decimal Stock { get; set; }
-        
+
         [Required]
         public Guid CustomerId { get; set; }
 
@@ -68,11 +68,11 @@ namespace MPDex.Models.ViewModels
         public decimal Amount { get; set; }
 
         public decimal Stock { get; set; }
-        
+
         public byte OrderCount { get; set; }
 
         public Guid CustomerId { get; set; }
-        
+
         public string NickName { get; set; }
 
         public short CoinId { get; set; }
@@ -94,15 +94,30 @@ namespace MPDex.Models.ViewModels
 
     public class BookSummaryModel
     {
+        public BookType BookType { get; set; }
+
+        public short CurrencyId { get; set; }
+
+        public short CoinId { get; set; }
+
         public decimal Price { get; set; }
 
-        public string CoinName { get; set; }
-
-        public string CurrencyName { get; set; }
-
         public decimal Amount { get; set; }
-
-        public int Count { get; set; }
     }
-    
+
+    public class BookCacheModel
+    {
+        public BookType BookType { get; set; }
+        
+        public decimal Price { get; set; }
+        
+        public decimal Amount { get; set; }
+        
+        public short CurrencyId { get; set; }
+        
+        public short CoinId { get; set; }
+
+        public string Key => string.Join("|", "Book",
+            string.Join(":", this.BookType, this.CurrencyId, this.CoinId));
+    }
 }

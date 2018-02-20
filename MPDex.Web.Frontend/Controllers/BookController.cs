@@ -1,7 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using MPDex.Models.Base;
 using MPDex.Models.ViewModels;
 using MPDex.Services;
+using MPDex.Web.Frontend.Hubs;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,12 +17,39 @@ namespace MPDex.Web.Frontend.Controllers
     public class BookController : Controller
     {
         private readonly IBookService service;
-        
-        public BookController(IBookService service)
+        private readonly IHubContext<BookHub> bookHub;
+        private readonly IBookCache bookCache;
+
+        public BookController(IBookService service, IBookCache bookCache, IHubContext<BookHub> bookHub)
         {
             this.service = service;
+            this.service.BookChanged += OnBookChanged;
+            this.bookCache = bookCache;
+            this.bookHub = bookHub;
         }
 
+        /// <summary>
+        /// Book changed callback
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnBookChanged(object sender, BookChangedEventArgs e)
+        {
+            // cache update
+            if (e.IsIncrease)
+            {
+                bookCache.IncreaseAsync(e.Book).Wait();
+            }
+            else
+            {
+                bookCache.DecreaseAsync(e.Book).Wait();
+            }
+
+            // hub call
+            var sm = Mapper.Map<BookSummaryModel>(e.Book);
+            this.bookHub.Clients.All.InvokeAsync("updateBook", sm).Wait();
+        }
+        
         // GET: api/Book
         [HttpGet]
         public async Task<IActionResult> Get(int pageIndex = 0, int pageSize = 20, int indexFrom = 0, int itemCount = 0)
@@ -32,8 +63,9 @@ namespace MPDex.Web.Frontend.Controllers
         [Route("Summary")]
         public async Task<IActionResult> Summary(short currencyId = 1, short coinId = 2, BookType bookType =BookType.Buy)
         {
-            var summary = await this.service.SumAsync(currencyId, coinId, bookType);
-                
+            //var summary = await this.service.SumAsync(currencyId, coinId, bookType);
+            var summary = await this.bookCache.GetAsync(bookType, currencyId, coinId, 10);
+            
             return Ok(summary);
         }
 
@@ -58,6 +90,8 @@ namespace MPDex.Web.Frontend.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+
+            cm.IPAddress = HttpContext.Connection.RemoteIpAddress.ToString();
 
             var vm = await this.service.AddAsync(cm);
 

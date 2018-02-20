@@ -10,14 +10,20 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MPDex.CacheRepository\MPDex.CacheRepository.csproj" />
     <ProjectReference Include="..\MPDex.Models\MPDex.Models.csproj" />
     <ProjectReference Include="..\MPDex.Repository\MPDex.Repository.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
+  
+  <!--prevent redis version conflict -->
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+    <ProjectReference Include="..\MPDex.CacheRepository\MPDex.CacheRepository.csproj" />
+  </ItemGroup>
+  
+  <!--<ItemGroup>
     <Reference Include="Microsoft.AspNetCore.Http.Abstractions">
       <HintPath>C:\Program Files\dotnet\sdk\NuGetFallbackFolder\microsoft.aspnetcore.http.abstractions\2.0.1\lib\netstandard2.0\Microsoft.AspNetCore.Http.Abstractions.dll</HintPath>
     </Reference>
-  </ItemGroup>
+  </ItemGroup>-->
 
 </Project>

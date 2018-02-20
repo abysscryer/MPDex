@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MPDex.Web.Spa.Controllers;
 
 namespace MPDex.Web.Spa
 {
@@ -22,6 +23,8 @@ namespace MPDex.Web.Spa
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSignalR();
+
             services.AddMvc();
         }
 
@@ -53,6 +56,11 @@ namespace MPDex.Web.Spa
                 routes.MapSpaFallbackRoute(
                     name: "spa-fallback",
                     defaults: new { controller = "Home", action = "Index" });
+            });
+
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<SignalRCounter>("signalrcounter");
             });
         }
     }

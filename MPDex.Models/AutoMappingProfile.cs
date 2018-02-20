@@ -35,6 +35,9 @@ namespace MPDex.Models
             CreateMap<BookOrderModel, Book>();
             CreateMap<Book, BookViewModel>();
             CreateMap<BookViewModel, Book>();
+            CreateMap<Book, BookCacheModel>();
+            CreateMap<BookViewModel, BookCacheModel>();
+            CreateMap<BookCacheModel, BookSummaryModel>();
 
             //Coin mapping
             CreateMap<Coin, CoinCreateModel>();
