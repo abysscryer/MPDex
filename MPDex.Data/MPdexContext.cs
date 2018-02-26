@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using MPDex.Data.Mappers;
 using MPDex.Models.Domain;
 
@@ -10,13 +11,17 @@ namespace MPDex.Data
 
     public class MPDexContext : IdentityDbContext<Operator, OperatorRole, string>
     {
+        private readonly ILoggerFactory loggerFactory;
+
         /// <summary>
         /// constructor
         /// </summary>
         /// <param name="options"></param>
-        public MPDexContext(DbContextOptions<MPDexContext> options) 
+        public MPDexContext(DbContextOptions<MPDexContext> options, ILoggerFactory loggerFactory) 
             : base(options)
-        { }
+        {
+            this.loggerFactory = loggerFactory;
+        }
         
         /// <summary>
         /// 잔고
@@ -80,6 +85,12 @@ namespace MPDex.Data
             new OrderMap(builder);
             new StatementMap(builder);
             new TradeMap(builder);
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder
+                .UseLoggerFactory(loggerFactory);
         }
     }
 

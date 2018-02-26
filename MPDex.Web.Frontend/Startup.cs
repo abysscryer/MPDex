@@ -12,10 +12,11 @@ using MPDex.CacheRepository;
 using MPDex.Data;
 using MPDex.Repository;
 using MPDex.Services;
-using MPDex.Web.Frontend.Controllers;
 using MPDex.Web.Frontend.Hubs;
+using MPDex.Web.Frontend.Middlewares;
 using Newtonsoft.Json.Serialization;
-using StackExchange.Redis;
+using Serilog;
+using Serilog.Events;
 
 namespace MPDex.Web.Frontend
 {
@@ -24,6 +25,13 @@ namespace MPDex.Web.Frontend
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(Configuration)
+                //.MinimumLevel.Verbose()
+                //.MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                .Enrich.FromLogContext()
+                .CreateLogger();
         }
 
         public IConfiguration Configuration { get; }
@@ -31,9 +39,12 @@ namespace MPDex.Web.Frontend
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddLogging(loggingBuilder =>
+                loggingBuilder.AddSerilog(dispose: true));
+            
             // inject dbcontext
             services.AddDbContext<MPDexContext>(options => options
-                .UseLoggerFactory(MyLoggerFactory)
+                //.UseLoggerFactory(MyLoggerFactory)
                 .UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), 
                     b => b.MigrationsAssembly("MPDex.Data")));
 
@@ -84,9 +95,22 @@ namespace MPDex.Web.Frontend
             services.AddSignalR();
 
             // inject mvc with json camel case resolver
-            services.AddMvc()
-                .AddJsonOptions(options => {
-                    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            //services.AddMvc()
+            //    .AddJsonOptions(options => {
+            //        options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            //    });
+
+            services.AddMvcCore()
+                .AddAuthorization()
+                .AddJsonFormatters();
+
+            services.AddAuthentication("Bearer")
+                .AddIdentityServerAuthentication(options =>
+                {
+                    options.Authority = "http://localhost:5000";
+                    options.RequireHttpsMetadata = false;
+
+                    options.ApiName = "api1";
                 });
         }
 
@@ -103,11 +127,13 @@ namespace MPDex.Web.Frontend
             {
                 app.UseExceptionHandler("/Home/Error");
             }
-
+            
             app.UseStaticFiles();
 
             app.UseAuthentication();
 
+            app.UseRemoteIpAddressLogging();
+            
             app.UseCors("AllowAny");
 
             app.UseSignalR(routes =>
