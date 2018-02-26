@@ -1,12 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2026
+VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MPDex", "MPDex\MPDex.csproj", "{6495770D-4AC9-4E1F-89F7-AC7A3EA2BE70}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MPDex.Web.Frontend", "MPDex.Web.Frontend\MPDex.Web.Frontend.csproj", "{97A3CAEF-D8A8-4F90-A929-310947356496}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MPDex.Data", "MPDex.Data\MPDex.Data.csproj", "{AB9E29E3-C331-4277-A6AC-96863AEBAB44}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MPDex.Services", "MPDex.Services\MPDex.Services.csproj", "{C9B9DD6D-747A-41A9-9A0C-4062F6491B9E}"
@@ -15,7 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MPDex.Models", "MPDex.Model
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MPDex.Repository", "MPDex.Repository\MPDex.Repository.csproj", "{7DDA8729-E1C1-498B-AB6E-2D9CC3F4C248}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPDex.CacheRepository", "MPDex.CacheRepository\MPDex.CacheRepository.csproj", "{0193160E-3B3F-4EAA-8B3C-54A1B28003F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MPDex.CacheRepository", "MPDex.CacheRepository\MPDex.CacheRepository.csproj", "{0193160E-3B3F-4EAA-8B3C-54A1B28003F2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MPDex.Web.Api", "MPDex.Web.Api\MPDex.Web.Api.csproj", "{64641AB1-52F0-4B31-BAF3-341A135CAA3C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MPDex.Web.Auth", "MPDex.Web.Auth\MPDex.Web.Auth.csproj", "{BECF9C26-9247-4073-B97F-59FBDE7FB6E2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,14 +23,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{6495770D-4AC9-4E1F-89F7-AC7A3EA2BE70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6495770D-4AC9-4E1F-89F7-AC7A3EA2BE70}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6495770D-4AC9-4E1F-89F7-AC7A3EA2BE70}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6495770D-4AC9-4E1F-89F7-AC7A3EA2BE70}.Release|Any CPU.Build.0 = Release|Any CPU
-		{97A3CAEF-D8A8-4F90-A929-310947356496}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{97A3CAEF-D8A8-4F90-A929-310947356496}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{97A3CAEF-D8A8-4F90-A929-310947356496}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{97A3CAEF-D8A8-4F90-A929-310947356496}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AB9E29E3-C331-4277-A6AC-96863AEBAB44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AB9E29E3-C331-4277-A6AC-96863AEBAB44}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AB9E29E3-C331-4277-A6AC-96863AEBAB44}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -51,6 +43,14 @@ Global
 		{0193160E-3B3F-4EAA-8B3C-54A1B28003F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0193160E-3B3F-4EAA-8B3C-54A1B28003F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0193160E-3B3F-4EAA-8B3C-54A1B28003F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64641AB1-52F0-4B31-BAF3-341A135CAA3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64641AB1-52F0-4B31-BAF3-341A135CAA3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64641AB1-52F0-4B31-BAF3-341A135CAA3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64641AB1-52F0-4B31-BAF3-341A135CAA3C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BECF9C26-9247-4073-B97F-59FBDE7FB6E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BECF9C26-9247-4073-B97F-59FBDE7FB6E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BECF9C26-9247-4073-B97F-59FBDE7FB6E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BECF9C26-9247-4073-B97F-59FBDE7FB6E2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

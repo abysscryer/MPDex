@@ -61,11 +61,12 @@ namespace MPDex.Web.Frontend
 
             // config redis
             services.Configure<RedisConfiguration>(Configuration.GetSection("redis"));
+
             // inject redis connection
             services.AddSingleton<IRedisConnectionFactory, RedisConnectionFactory>();
 
             // client ip address information
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            //services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             // inject bookCache
             services.AddScoped<IBookCache, BookCache>();
@@ -81,28 +82,28 @@ namespace MPDex.Web.Frontend
             services.AddScoped<IFeeService, FeeService>();
             
             // inject email service
-            services.AddTransient<IEmailSender, EmailSender>();
+            //services.AddTransient<IEmailSender, EmailSender>();
 
-            services.AddCors(action => action.AddPolicy("AllowAny", builder =>
-            {
-                builder
-                    .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .AllowAnyOrigin();
-            }));
+            // services.AddCors(action => action.AddPolicy("AllowAny", builder =>
+            // {
+            //     builder
+            //         .AllowAnyHeader()
+            //         .AllowAnyMethod()
+            //         .AllowAnyOrigin();
+            // }));
 
             // inject signalr
             services.AddSignalR();
 
             // inject mvc with json camel case resolver
-            //services.AddMvc()
-            //    .AddJsonOptions(options => {
-            //        options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-            //    });
+            services.AddMvc()
+                .AddJsonOptions(options => {
+                    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                });
 
-            services.AddMvcCore()
-                .AddAuthorization()
-                .AddJsonFormatters();
+            //services.AddMvcCore()
+            //    .AddAuthorization()
+            //    .AddJsonFormatters();
 
             services.AddAuthentication("Bearer")
                 .AddIdentityServerAuthentication(options =>

@@ -9,7 +9,7 @@ using MPDex.Models.Domain;
 namespace MPDex.Data
 {
 
-    public class MPDexContext : IdentityDbContext<Operator, OperatorRole, string>
+    public class MPDexContext : DbContext //: IdentityDbContext<Operator, OperatorRole, string>
     {
         private readonly ILoggerFactory loggerFactory;
 

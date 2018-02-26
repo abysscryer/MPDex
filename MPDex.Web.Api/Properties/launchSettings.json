@@ -4,21 +4,22 @@
     "anonymousAuthentication": true,
     "iisExpress": {
       "applicationUrl": "http://localhost:5001/",
-      "sslPort": 44327
+      "sslPort": 0
     }
   },
   "profiles": {
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "https://localhost:5001/",
+      "launchUrl": "api/coin/all",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "MPDex.Web.Frontend": {
+    "MPDex.Web.Api": {
       "commandName": "Project",
       "launchBrowser": true,
+      "launchUrl": "api/coin/all",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
