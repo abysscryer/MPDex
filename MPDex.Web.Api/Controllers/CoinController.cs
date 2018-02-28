@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MPDex.Models.ViewModels;
 using MPDex.Services;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ namespace MPDex.Web.Api.Controllers
 {
     [Produces("application/json")]
     [Route("api/Coin")]
+    [Authorize]
     public class CoinController : Controller
     {
         private readonly ICoinService service;

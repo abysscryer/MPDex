@@ -24,8 +24,20 @@ namespace MPDex.Web.Auth
         {
             return new List<ApiResource>
             {
-                new ApiResource("api1", "My API")
+                new ApiResource("api1", "API 1"),
+                new ApiResource("api2", "API 2")
+                {
+                    ApiSecrets =
+                    {
+                        new Secret("secret".Sha256())
+                    },
+                    Scopes =
+                    {
+                        new Scope("api")
+                    }
+                }
             };
+            
         }
 
         // clients want to access resources (aka scopes)
@@ -43,7 +55,8 @@ namespace MPDex.Web.Auth
                     {
                         new Secret("secret".Sha256())
                     },
-                    AllowedScopes = { "api1" }
+                    AllowedScopes = { "api1" },
+                    AllowedCorsOrigins = { "http://localhost:5001" }
                 },
 
                 // resource owner password grant client
@@ -64,9 +77,10 @@ namespace MPDex.Web.Auth
                 {
                     ClientId = "mvc",
                     ClientName = "MVC Client",
+                    
                     AllowedGrantTypes = GrantTypes.HybridAndClientCredentials,
 
-                    RequireConsent = true,
+                    RequireConsent = false,
 
                     ClientSecrets = 
                     {
@@ -82,7 +96,9 @@ namespace MPDex.Web.Auth
                         IdentityServerConstants.StandardScopes.Profile,
                         "api1"
                     },
-                    AllowOfflineAccess = true
+                    AllowOfflineAccess = true,
+                    //AllowedCorsOrigins = { "http://localhost:5001" }
+                    //AllowedCorsOrigins = new List<string> {"http://localhost:5002"}
                 }
             };
         }

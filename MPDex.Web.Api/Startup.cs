@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using IdentityServer4.AccessTokenValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -59,19 +61,21 @@ namespace MPDex.Web.Api
 
             services.AddSignalR();
 
-            services.AddMvc()
-                .AddJsonOptions(options => {
-                    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                });
+            services
+                .AddMvcCore()
+                .AddJsonFormatters(options => 
+                    options.ContractResolver = new CamelCasePropertyNamesContractResolver())
+                .AddAuthorization();
+
+            services.AddCors();
 
             services.AddAuthentication("Bearer")
-                .AddIdentityServerAuthentication(options =>
-                {
-                    options.Authority = "http://localhost:5000";
-                    options.RequireHttpsMetadata = false;
-
-                    options.ApiName = "api1";
-                });
+            .AddIdentityServerAuthentication(options =>
+            {
+                options.Authority = "http://localhost:5000";
+                options.RequireHttpsMetadata = false;
+                options.ApiName = "api1";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -82,8 +86,16 @@ namespace MPDex.Web.Api
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseAuthentication();
+            app.UseCors(policy =>
+            {
+                policy.WithOrigins("http://localhost:5002");
+                policy.AllowAnyHeader();
+                policy.AllowAnyMethod();
+                policy.WithExposedHeaders("WWW-Authenticate");
+            });
 
+            app.UseAuthentication();
+            
             app.UseRemoteIpAddressLogging();
 
             app.UseSignalR(routes =>

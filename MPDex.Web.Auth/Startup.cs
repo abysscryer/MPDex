@@ -65,6 +65,12 @@ namespace MPDex.Web.Auth
                     options.ClientId = "998042782978-s07498t8i8jas7npj4crve1skpromf37.apps.googleusercontent.com";
                     options.ClientSecret = "HsnwJri_53zn7VcO1Fm7THBb";
                 });
+
+            //var cors = new DefaultCorsPolicyService(_loggerFactory.CreateLogger<DefaultCorsPolicyService>())
+            //{
+            //    AllowedOrigins = { "https://foo", "https://bar" }
+            //};
+            //services.AddSingleton<ICorsPolicyService>(cors);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
