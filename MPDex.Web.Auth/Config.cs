@@ -25,17 +25,8 @@ namespace MPDex.Web.Auth
             return new List<ApiResource>
             {
                 new ApiResource("api1", "API 1"),
-                new ApiResource("api2", "API 2")
-                {
-                    ApiSecrets =
-                    {
-                        new Secret("secret".Sha256())
-                    },
-                    Scopes =
-                    {
-                        new Scope("api")
-                    }
-                }
+                new ApiResource("api2", "API 2"),
+                new ApiResource("reactchat", "React Chat Demo")
             };
             
         }
@@ -94,12 +85,33 @@ namespace MPDex.Web.Auth
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
-                        "api1"
+                        "api1","api2"
                     },
                     AllowOfflineAccess = true,
                     //AllowedCorsOrigins = { "http://localhost:5001" }
-                    //AllowedCorsOrigins = new List<string> {"http://localhost:5002"}
+                },
+                new Client
+                {
+                    ClientId = "reactchat",
+                    ClientName = "React Chat Demo",
+                    ClientSecrets =
+                    {
+                        new Secret("secret".Sha256())
+                    },
+                    // no interactive user, use the clientid/secret for authentication
+                    AllowedGrantTypes = GrantTypes.Implicit,
+
+                    RedirectUris = { "http://localhost:5002/signin-oidc" },
+                    PostLogoutRedirectUris = { "http://localhost:5002/signout-callback-oidc" },
+
+                    AllowedScopes =
+                    {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        "api1"
+                    }
                 }
+
             };
         }
     }

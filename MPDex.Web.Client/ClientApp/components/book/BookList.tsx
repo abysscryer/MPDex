@@ -148,7 +148,9 @@ export class BookList extends React.Component<RouteComponentProps<{}>, BookListS
         const currencyId = this.state.book.currencyId;
         const coinId = this.state.book.coinId;
 
-        fetch(`http://localhost:5002/api/book?booktype=${bookType}&currencyId=${currencyId}&coinId=${coinId}`)
+        fetch(`http://localhost:5002/api/book?booktype=${bookType}&currencyId=${currencyId}&coinId=${coinId}`, {
+            credentials: 'include'
+        })
             .then(response => response.json() as Promise<IBook[]>)
             .then(data => {
                 if (bookType === BookType.Buy) {
@@ -170,7 +172,9 @@ export class BookList extends React.Component<RouteComponentProps<{}>, BookListS
 
     // get coins from api
     private getCoins = () => {
-        fetch('http://localhost:5002/home/coin')
+        fetch('http://localhost:5002/api/coin', {
+            credentials: 'include'
+        })
             .then(response => response.json() as Promise<ICoin[]>)
             .then(data => {
                 this.setState({ coins: data, currency: data[0], coin: data[1] });
